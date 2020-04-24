@@ -14,18 +14,26 @@ class FavoriteButton extends StatelessWidget {
         child: Stack(overflow: Overflow.visible, children: [
           Icon(
             Icons.favorite,
-            color: Colors.red,
-            size: 40,
+            color: Colors.black,
+            size: 45,
           ),
           Positioned(
-            top: 7,
-            right: 10,
-            child: Text(
-              '13',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold),
+            top: -5,
+            right: -5,
+            child: Material(
+              type: MaterialType.circle,
+              elevation: 2.0,
+              color: Colors.red,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  '11',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ),
         ]),
