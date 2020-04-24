@@ -42,9 +42,12 @@ class _DetailScreenState extends State<DetailScreen> {
                 pinned: true,
                 elevation: 0.0,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Image.network(
-                    '${TmdbApi.coverImagePath}${movie.posterPath}',
-                    fit: BoxFit.cover,
+                  background: Hero(
+                    tag: movie.hashCode,
+                    child: Image.network(
+                      '${TmdbApi.coverImagePath}${movie.posterPath}',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

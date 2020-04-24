@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'detail_screen.dart';
 import '../widgets/favorite_button.dart';
+import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
-import '../../blocs/trailer_bloc.dart';
 import '../../models/response.dart';
-import '../../models/movie.dart';
-import '../../resources/tmdb_api.dart';
 
 class HomeScreen extends StatelessWidget {
   static final routeName = 'home';
@@ -106,54 +103,6 @@ class GridBuilder extends StatelessWidget {
         return MovieCard(movie: currentEntry);
       },
       itemCount: response.data.results.length,
-    );
-  }
-}
-
-class MovieCard extends StatelessWidget {
-  final Movie movie;
-
-  const MovieCard({this.movie});
-
-  void _navigateToDetail(BuildContext context) {
-    final trailerBloc = TrailerBloc();
-    trailerBloc.findTrailers(movie.id);
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            builder: (context) => Provider.value(
-              value: trailerBloc,
-              child: DetailScreen(),
-            ),
-            settings: RouteSettings(arguments: movie),
-          ),
-        )
-        .then((_) => trailerBloc.dispose);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => _navigateToDetail(context),
-      child: Container(
-        margin: EdgeInsets.all(2),
-        child: Image.network(
-          '${TmdbApi.movieImagePath}${movie.posterPath}',
-          loadingBuilder: (BuildContext context, Widget child,
-              ImageChunkEvent loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes
-                    : null,
-              ),
-            );
-          },
-          fit: BoxFit.cover,
-        ),
-      ),
     );
   }
 }
