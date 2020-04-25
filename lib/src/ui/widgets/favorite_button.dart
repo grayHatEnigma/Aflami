@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
+import '../../blocs/favorites_bloc.dart';
+
 class FavoriteButton extends StatelessWidget {
   final Function onTap;
 
@@ -7,6 +11,7 @@ class FavoriteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final favoritesBloc = Provider.of<FavoritesBloc>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
@@ -26,13 +31,18 @@ class FavoriteButton extends StatelessWidget {
               color: Colors.red,
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
-                child: Text(
-                  '11',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold),
-                ),
+                child: StreamBuilder<int>(
+                    stream: favoritesBloc.outTotalFavorites,
+                    initialData: 0,
+                    builder: (context, snapshot) {
+                      return Text(
+                        snapshot.data.toString(),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold),
+                      );
+                    }),
               ),
             ),
           ),

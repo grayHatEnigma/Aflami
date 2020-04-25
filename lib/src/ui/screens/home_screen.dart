@@ -25,48 +25,51 @@ class HomeScreen extends StatelessWidget {
             FavoriteButton(onTap: null),
           ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            FloatingActionButton(
-              heroTag: 'previous page',
-              backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () => responseBloc.dispath(ResponseEvent.previous),
-              child: Icon(
-                Icons.navigate_before,
-                color: Theme.of(context).backgroundColor,
-                size: 31,
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: 1,
+            backgroundColor: Colors.black54,
+            unselectedItemColor: Theme.of(context).primaryColor,
+            onTap: (index) {
+              if (index == 0) {
+                responseBloc.dispath(ResponseEvent.previous);
+              } else if (index == 2) {
+                responseBloc.dispath(ResponseEvent.next);
+              }
+            },
+            items: [
+              BottomNavigationBarItem(
+                title: Text('previous'),
+                icon: Icon(
+                  Icons.navigate_before,
+                  size: 31,
+                ),
               ),
-            ),
-            FloatingActionButton(
-                heroTag: 'page index',
-                backgroundColor: Theme.of(context).backgroundColor,
-                onPressed: null,
-                child: StreamBuilder<Object>(
+              BottomNavigationBarItem(
+                title: Container(),
+                icon: StreamBuilder<Object>(
                     stream: responseBloc.currentIndex,
                     initialData: '1',
                     builder: (context, snapshot) {
-                      return Text(
-                        snapshot.data.toString(),
-                        style: TextStyle(
-                            color: Theme.of(context).primaryColor,
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold),
+                      return CircleAvatar(
+                        backgroundColor: Theme.of(context).primaryColor,
+                        child: Text(
+                          snapshot.data.toString(),
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
                       );
-                    })),
-            FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
-              onPressed: () => responseBloc.dispath(ResponseEvent.next),
-              child: Icon(
-                Icons.navigate_next,
-                color: Theme.of(context).backgroundColor,
-                size: 31,
+                    }),
               ),
-            ),
-          ],
-        ),
+              BottomNavigationBarItem(
+                title: Text('next'),
+                icon: Icon(
+                  Icons.navigate_next,
+                  size: 31,
+                ),
+              ),
+            ]),
         body: StreamBuilder(
           stream: responseBloc.allMovies,
           builder: (context, snapshot) {

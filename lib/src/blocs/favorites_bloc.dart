@@ -12,7 +12,7 @@ class FavoritesBloc extends BlocBase {
   int get _totalFavorites => _favorites.length;
 
   // Controllers
-  // we need 3 controllers
+  // we need 4 controllers
 
   // 1- controller for getting total favorites count
   final _totalFavoritesContrller =
@@ -35,15 +35,29 @@ class FavoritesBloc extends BlocBase {
   StreamController<int> _favoriteRemoveController = StreamController<int>();
   Function(int) get inRemoveFavorite => _favoriteRemoveController.sink.add;
 
+  // 4- controller that determines wether a given movie is in favorites or not
+  StreamController<bool> _isFavoriteController = StreamController.broadcast();
+  Stream<bool> get isFavorite => _isFavoriteController.stream;
+
+  StreamController<int> _checkMovieController = StreamController.broadcast();
+  Function(int) get checkMovie => _checkMovieController.sink.add;
+
+  // constructor
   FavoritesBloc() {
     _favoriteAddController.stream.listen(_handleAddFavorite);
     _favoriteRemoveController.stream.listen(_handleRemoveFavorite);
+    _checkMovieController.stream.listen(_handleMovieCheck);
   }
 
 // ############# Handling Logic #################
+  void _handleMovieCheck(movieId) {
+    _isFavoriteController.sink.add(_favorites.any((item) => item == movieId));
+  }
+
   void _handleAddFavorite(movieId) {
     // add the movie id to the list
     _favorites.add(movieId);
+
     //
     _notify();
   }
@@ -51,6 +65,7 @@ class FavoritesBloc extends BlocBase {
   void _handleRemoveFavorite(movieId) {
     // remove the movie id from the list
     _favorites.remove(movieId);
+
     //
     _notify();
   }
@@ -67,5 +82,7 @@ class FavoritesBloc extends BlocBase {
     _favoriteRemoveController.close();
     _totalFavoritesContrller.close();
     _favoritesController.close();
+    _isFavoriteController.close();
+    _checkMovieController.close();
   }
 }

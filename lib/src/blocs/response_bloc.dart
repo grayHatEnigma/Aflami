@@ -45,14 +45,19 @@ class ResponseBloc extends BlocBase {
     if (event == ResponseEvent.next && _pageIndex <= 500) {
       _pageIndex++;
       _indexController.add(_pageIndex);
+      // to show loading bar while we fetch the next page
+      _loading();
       await _fetchResult(_pageIndex);
     } else if (event == ResponseEvent.previous && _pageIndex > 1) {
       _pageIndex--;
       _indexController.add(_pageIndex);
+      // to show loading bar while we fetch the next page
+      _loading();
       await _fetchResult(_pageIndex);
     }
   }
 
+  void _loading() => _moviesController.sink.add(null);
   // Dispose and close all Controllers
   @override
   void dispose() {

@@ -7,6 +7,7 @@ import '../../models/movie.dart';
 import '../../models/trailer.dart';
 import '../../resources/tmdb_api.dart';
 import '../../blocs/trailer_bloc.dart';
+import '../../blocs/favorites_bloc.dart';
 
 class DetailScreen extends StatefulWidget {
   static final routeName = 'detail';
@@ -18,12 +19,16 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen> {
   Movie movie;
   TrailerBloc trailerBloc;
+  FavoritesBloc favoritesBloc;
+  bool isFavorite;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     trailerBloc = Provider.of<TrailerBloc>(context);
+    favoritesBloc = Provider.of<FavoritesBloc>(context);
     movie = ModalRoute.of(context).settings.arguments as Movie;
+    favoritesBloc.checkMovie(movie.id);
   }
 
   @override
@@ -37,6 +42,38 @@ class _DetailScreenState extends State<DetailScreen> {
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
               SliverAppBar(
+                actions: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: StreamBuilder<bool>(
+                        stream: favoritesBloc.isFavorite,
+                        initialData: false,
+                        builder: (context, snapshot) {
+                          return GestureDetector(
+                            onTap: () {
+                              snapshot.data
+                                  ? favoritesBloc.inRemoveFavorite(movie.id)
+                                  : favoritesBloc.inAddFavorite(movie.id);
+                              favoritesBloc.checkMovie(movie.id);
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Colors.black87,
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  snapshot.data
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color:
+                                      snapshot.data ? Colors.red : Colors.white,
+                                  size: 27,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                ],
                 expandedHeight: 250.0,
                 floating: false,
                 pinned: true,
@@ -56,7 +93,6 @@ class _DetailScreenState extends State<DetailScreen> {
           body: Padding(
             padding: const EdgeInsets.all(10.0),
             child: ListView(
-              //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(margin: EdgeInsets.only(top: 5.0)),
                 Text(
@@ -70,8 +106,8 @@ class _DetailScreenState extends State<DetailScreen> {
                 Row(
                   children: <Widget>[
                     Icon(
-                      Icons.favorite,
-                      color: Colors.red,
+                      Icons.star,
+                      color: Colors.amber,
                     ),
                     Container(
                       margin: EdgeInsets.only(left: 1.0, right: 1.0),
