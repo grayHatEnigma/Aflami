@@ -22,8 +22,8 @@ class TmdbApi {
   String path = '3/discover/movie';
   String apiKey = '28fe1345095e5381abd32b0578210b0d';
 
-  static final coverImagePath = 'https://image.tmdb.org/t/p/w300';
-  static final movieImagePath = 'https://image.tmdb.org/t/p/w185';
+  static final coverImagePath = 'https://image.tmdb.org/t/p/w500';
+  static final movieImagePath = 'https://image.tmdb.org/t/p/w200';
 
   // fectch movie detail for favorites screen
   Future<Movie> fetchMovieDetail(int movieId) async {

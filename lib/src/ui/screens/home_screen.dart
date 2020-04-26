@@ -18,14 +18,28 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
-          title: Text(
-            'Aflami',
-            style: Theme.of(context).textTheme.title,
+          centerTitle: false,
+          title: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Image.asset(
+                'images/aflami.png',
+                height: 30,
+                width: 30,
+              ),
+              SizedBox(width: 7),
+              Text(
+                'Aflami',
+                style: Theme.of(context).textTheme.title,
+              ),
+            ],
           ),
           actions: [
-            FavoriteButton(onTap: () {
-              Navigator.pushNamed(context, FavoritesScreen.routeName);
-            }),
+            Center(
+              child: FavoriteButton(onTap: () {
+                Navigator.pushNamed(context, FavoritesScreen.routeName);
+              }),
+            ),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
