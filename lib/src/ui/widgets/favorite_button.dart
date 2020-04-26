@@ -20,7 +20,7 @@ class FavoriteButton extends StatelessWidget {
           Icon(
             Icons.favorite,
             color: Colors.black,
-            size: 40,
+            size: 35,
           ),
           Positioned(
             top: -5,

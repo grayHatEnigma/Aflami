@@ -6,7 +6,6 @@ import 'favorites_screen.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
-import '../../blocs/favorites_bloc.dart';
 import '../../models/response.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -20,7 +19,7 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           title: Text(
-            'AFLAMY',
+            'Aflami',
             style: Theme.of(context).textTheme.title,
           ),
           actions: [

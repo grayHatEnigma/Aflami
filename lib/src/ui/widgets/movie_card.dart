@@ -42,7 +42,7 @@ class MovieCard extends StatelessWidget {
               child: Hero(
                 tag: movie.hashCode,
                 child: Image.network(
-                  '${TmdbApi.coverImagePath}${movie.posterPath}',
+                  '${TmdbApi.movieImagePath}${movie.posterPath}',
                   loadingBuilder: (BuildContext context, Widget child,
                       ImageChunkEvent loadingProgress) {
                     if (loadingProgress == null) return child;

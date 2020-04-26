@@ -32,7 +32,7 @@ class App extends StatelessWidget {
             title: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Raleway',
-                fontSize: 25,
+                fontSize: 23,
                 fontWeight: FontWeight.bold),
             body1: TextStyle(color: Colors.white, fontSize: 21),
           ),
