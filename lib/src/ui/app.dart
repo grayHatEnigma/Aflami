@@ -30,7 +30,10 @@ class App extends StatelessWidget {
           backgroundColor: Colors.black,
           textTheme: TextTheme(
             title: TextStyle(
-                color: Colors.black, fontFamily: 'Action', fontSize: 25),
+                color: Colors.black,
+                fontFamily: 'Raleway',
+                fontSize: 25,
+                fontWeight: FontWeight.bold),
             body1: TextStyle(color: Colors.white, fontSize: 21),
           ),
         ),
@@ -42,7 +45,7 @@ class App extends StatelessWidget {
               dispose: (context, movieDetailBloc) => movieDetailBloc.dispose(),
               child: FavoritesScreen()),
         },
-        initialRoute: HomeScreen.routeName,
+        initialRoute: SplashScreen.routeName,
       ),
     );
   }

@@ -37,10 +37,17 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+    - images/aflami.png
+ 
+
   fonts:
-    - family: 'Action'
+    - family: 'Raleway'
       fonts:
-      - asset: fonts/Action-Regular.ttf
+      - asset: fonts/Raleway-Regular.ttf
+      - asset: fonts/Raleway-Bold.ttf
+      - asset: fonts/Raleway-Black.ttf
+      - asset: fonts/Raleway-Thin.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
