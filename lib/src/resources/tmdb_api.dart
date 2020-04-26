@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import '../models/response.dart';
 import '../models/trailer.dart';
+import '../models/movie.dart';
 
 /*
 This is we the request to The Movie DB is done
@@ -23,6 +24,19 @@ class TmdbApi {
 
   static final coverImagePath = 'https://image.tmdb.org/t/p/w500';
   static final movieImagePath = 'https://image.tmdb.org/t/p/w185';
+
+  // fectch movie detail for favorites screen
+  Future<Movie> fetchMovieDetail(int movieId) async {
+    String movieDetailUrl = 'https://$baseUrl/3/movie/$movieId?api_key=$apiKey';
+
+    var response = await _client.get(movieDetailUrl);
+    if (response.statusCode == 200) {
+      print(response.body);
+      return Movie(json.decode(response.body));
+    } else {
+      throw 'Failed to load movie detail';
+    }
+  }
 
   Future<ResponseModel> fetchMoviesResponse(
       {String language: 'en-US', String pageIndex}) async {
@@ -52,7 +66,7 @@ class TmdbApi {
   }
 
 // a function to fetch movie trailers given movie id
-  Future<TrailerModel> fetchTrailersResponse(String movieId) async {
+  Future<TrailerModel> fetchTrailersResponse(int movieId) async {
     String movieTrailerUrl =
         'https://$baseUrl/3/movie/$movieId/videos?api_key=$apiKey';
 

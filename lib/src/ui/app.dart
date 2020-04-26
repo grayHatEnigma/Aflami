@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'screens/favorites_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
 import '../blocs/response_bloc.dart';
 import '../blocs/favorites_bloc.dart';
+import '../blocs/movie_detail_bloc.dart';
 
 class App extends StatelessWidget {
   @override
@@ -35,6 +37,10 @@ class App extends StatelessWidget {
         routes: {
           HomeScreen.routeName: (context) => HomeScreen(),
           SplashScreen.routeName: (context) => SplashScreen(),
+          FavoritesScreen.routeName: (context) => Provider(
+              create: (context) => MovieDetailBloc(),
+              dispose: (context, movieDetailBloc) => movieDetailBloc.dispose(),
+              child: FavoritesScreen()),
         },
         initialRoute: HomeScreen.routeName,
       ),

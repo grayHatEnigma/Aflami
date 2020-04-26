@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:rxdart/rxdart.dart';
+
 import 'bloc_base.dart';
-// import '../models/movie.dart';
 
 class FavoritesBloc extends BlocBase {
   // State
@@ -15,13 +16,13 @@ class FavoritesBloc extends BlocBase {
   // we need 4 controllers
 
   // 1- controller for getting total favorites count
-  final _totalFavoritesContrller =
-      StreamController<int>.broadcast(); // has multiple listners
+  final _totalFavoritesContrller = BehaviorSubject<int>();
   Stream<int> get outTotalFavorites => _totalFavoritesContrller.stream;
   StreamSink<int> get _inTotalFavorites => _totalFavoritesContrller.sink;
 
   // 2- controller for getting the favorites list
-  final _favoritesController = StreamController<List<int>>(); // single listner
+  final _favoritesController =
+      BehaviorSubject<List<int>>(); // multiple listners
   Stream<List<int>> get outFavorites => _favoritesController.stream;
   StreamSink<List<int>> get _inFavorites => _favoritesController.sink;
 

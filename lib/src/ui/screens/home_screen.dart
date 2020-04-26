@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'favorites_screen.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
+import '../../blocs/favorites_bloc.dart';
 import '../../models/response.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -22,7 +24,9 @@ class HomeScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.title,
           ),
           actions: [
-            FavoriteButton(onTap: null),
+            FavoriteButton(onTap: () {
+              Navigator.pushNamed(context, FavoritesScreen.routeName);
+            }),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

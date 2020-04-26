@@ -1,6 +1,7 @@
 import 'tmdb_api.dart';
 import '../models/response.dart';
 import '../models/trailer.dart';
+import '../models/movie.dart';
 
 /// This Repository class is the central point from where the data will flow to the BLoC.
 /// and serves as an extra separation layer for the network call.
@@ -21,5 +22,9 @@ class Repository {
 
 // fetch trailers list from the api
   Future<TrailerModel> fetchTrailersResponse(int movieId) =>
-      _tmdbApiProvider.fetchTrailersResponse(movieId.toString());
+      _tmdbApiProvider.fetchTrailersResponse(movieId);
+
+// fetch movie detail for favorites screen
+  Future<Movie> fetchMovieDetail(int movieId) =>
+      _tmdbApiProvider.fetchMovieDetail(movieId);
 }
