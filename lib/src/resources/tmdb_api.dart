@@ -31,7 +31,6 @@ class TmdbApi {
 
     var response = await _client.get(movieDetailUrl);
     if (response.statusCode == 200) {
-      print(response.body);
       return Movie(json.decode(response.body));
     } else {
       throw 'Failed to load movie detail';
