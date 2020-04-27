@@ -1,22 +1,19 @@
 import 'dart:async';
-import 'package:http/http.dart' show Client;
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'exceptions.dart';
 import '../models/response.dart';
 import '../models/trailer.dart';
 import '../models/movie.dart';
 
 /*
-This is we the request to The Movie DB is done
-
+This is where the requests to The Movie DB is done
 Movies DB API Key : 28fe1345095e5381abd32b0578210b0d
-
-request link : https://api.themoviedb.org/3/movie/popular?api_key=28fe1345095e5381abd32b0578210b0d
 */
-class TmdbApi {
-  // This should be injected
-  Client _client = Client();
 
+class TmdbApi {
   // basics components of the api request
   String baseUrl = 'api.themoviedb.org';
   String path = '3/discover/movie';
@@ -25,18 +22,28 @@ class TmdbApi {
   static final coverImagePath = 'https://image.tmdb.org/t/p/w500';
   static final movieImagePath = 'https://image.tmdb.org/t/p/w200';
 
-  // fectch movie detail for favorites screen
+/*  
+
+Improved Api Calls 
+
+*/
+
+  //  a function to fectch movie detail for favorites screen
   Future<Movie> fetchMovieDetail(int movieId) async {
     String movieDetailUrl = 'https://$baseUrl/3/movie/$movieId?api_key=$apiKey';
-
-    var response = await _client.get(movieDetailUrl);
-    if (response.statusCode == 200) {
-      return Movie(json.decode(response.body));
-    } else {
-      throw 'Failed to load movie detail';
-    }
+    final parsedJson = await _getParsedJson(movieDetailUrl);
+    return Movie(parsedJson);
   }
 
+// a function to fetch movie trailers given movie id
+  Future<TrailerModel> fetchTrailersResponse(int movieId) async {
+    String movieTrailerUrl =
+        'https://$baseUrl/3/movie/$movieId/videos?api_key=$apiKey';
+    final parsedJson = await _getParsedJson(movieTrailerUrl);
+    return TrailerModel.fromJson(parsedJson);
+  }
+
+  // a function to fetch movies list for home screen
   Future<ResponseModel> fetchMoviesResponse(
       {String language: 'en-US', String pageIndex}) async {
     // request url and the query parameters
@@ -51,30 +58,41 @@ class TmdbApi {
       },
     );
 
-    var response = await _client.get(uri);
-
+    final parsedJson = await _getParsedJson(uri);
     // addtional delay for slow connections
     await Future.delayed(
       Duration(seconds: 1),
     );
-
-    if (response.statusCode == 200) {
-      return ResponseModel.fromJson(jsonDecode(response.body));
-    } else
-      throw Exception('Failed to load results');
+    return ResponseModel.fromJson(parsedJson);
   }
 
-// a function to fetch movie trailers given movie id
-  Future<TrailerModel> fetchTrailersResponse(int movieId) async {
-    String movieTrailerUrl =
-        'https://$baseUrl/3/movie/$movieId/videos?api_key=$apiKey';
+// ############# core request and handling exceptions functions ############
+  Future _getParsedJson(url) async {
+    var parsedJson;
+    try {
+      var response = await http.get(url);
+      parsedJson = _response(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return parsedJson;
+  }
 
-    var response = await _client.get(movieTrailerUrl);
+  dynamic _response(http.Response response) {
+    switch (response.statusCode) {
+      case 200:
+        return json.decode(response.body);
+      case 400:
+        throw BadRequestException(response.body);
+      case 401:
 
-    if (response.statusCode == 200) {
-      return TrailerModel.fromJson(json.decode(response.body));
-    } else {
-      throw Exception('Failed to load trailers');
+      case 403:
+        throw UnauthorisedException(response.body);
+      case 500:
+
+      default:
+        throw FetchDataException(
+            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
     }
   }
-}
+} // class

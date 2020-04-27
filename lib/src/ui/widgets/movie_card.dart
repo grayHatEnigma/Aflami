@@ -41,22 +41,24 @@ class MovieCard extends StatelessWidget {
               clipper: _SquareClipper(),
               child: Hero(
                 tag: movie.hashCode,
-                child: Image.network(
-                  '${TmdbApi.movieImagePath}${movie.posterPath}',
-                  loadingBuilder: (BuildContext context, Widget child,
-                      ImageChunkEvent loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes
-                            : null,
+                child: movie.posterPath == null
+                    ? Container()
+                    : Image.network(
+                        '${TmdbApi.movieImagePath}${movie.posterPath}',
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes
+                                  : null,
+                            ),
+                          );
+                        },
+                        fit: BoxFit.cover,
                       ),
-                    );
-                  },
-                  fit: BoxFit.cover,
-                ),
               ),
             ),
             Container(
