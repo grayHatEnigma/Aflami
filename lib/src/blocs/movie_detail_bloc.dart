@@ -28,6 +28,7 @@ class MovieDetailBloc extends BlocBase {
 // ####### Handling Logic ##########
 
   void _handleMovieList(List<int> ids) async {
+    // FIXME: adding events after disposing
     List<Movie> movies = [];
     for (int id in ids) {
       final movie = await _fetchMovieDetail(id);
@@ -43,7 +44,7 @@ class MovieDetailBloc extends BlocBase {
 
 // ######### Disposing #########
   @override
-  void dispose() {
+  void dispose() async {
     print('MovieDetailBloc is disposed');
     _movieIdListController.close();
     _movieListController.close();

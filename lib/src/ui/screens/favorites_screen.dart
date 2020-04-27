@@ -18,7 +18,7 @@ class FavoritesScreen extends StatelessWidget {
         backgroundColor: Theme.of(context).backgroundColor,
         appBar: AppBar(
           title: Text(
-            'Aflami',
+            'Favorites',
             style: Theme.of(context).textTheme.title,
           ),
           actions: [

@@ -13,7 +13,7 @@ class MovieCard extends StatelessWidget {
   const MovieCard({this.movie});
 
   // a function that handles the navigation code and disposing the bloc
-  void _navigateToDetail(BuildContext context) {
+  void _navigateToDetail(BuildContext context, Image poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);
     Navigator.of(context)
@@ -23,16 +23,38 @@ class MovieCard extends StatelessWidget {
               value: trailerBloc,
               child: DetailScreen(),
             ),
-            settings: RouteSettings(arguments: movie),
+            settings: RouteSettings(arguments: [movie, poster]),
           ),
         )
         .then((_) => trailerBloc.dispose);
   }
 
+  Image _cachePoster() {
+    return Image.network(
+      '${TmdbApi.coverImagePath}${movie.posterPath}',
+      loadingBuilder: (BuildContext context, Widget child,
+          ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes
+                : null,
+          ),
+        );
+      },
+      fit: BoxFit.cover,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // cache the poster image
+    final poster = _cachePoster();
+
     return InkWell(
-      onTap: () => _navigateToDetail(context),
+      onTap: () => _navigateToDetail(context, poster),
       child: Card(
         child: Stack(
           fit: StackFit.expand,
@@ -40,26 +62,8 @@ class MovieCard extends StatelessWidget {
             ClipRect(
               clipper: _SquareClipper(),
               child: Hero(
-                tag: movie.hashCode,
-                child: movie.posterPath == null
-                    ? Container()
-                    : Image.network(
-                        '${TmdbApi.movieImagePath}${movie.posterPath}',
-                        loadingBuilder: (BuildContext context, Widget child,
-                            ImageChunkEvent loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return Center(
-                            child: CircularProgressIndicator(
-                              value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes
-                                  : null,
-                            ),
-                          );
-                        },
-                        fit: BoxFit.cover,
-                      ),
-              ),
+                  tag: movie.hashCode,
+                  child: movie.posterPath == null ? Container() : poster),
             ),
             Container(
               decoration: _buildGradientBackground(),

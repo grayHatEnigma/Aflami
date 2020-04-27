@@ -17,8 +17,8 @@ class FavoriteItem extends StatelessWidget {
     @required this.onRemove,
   });
 
-  // a function that handles the navigation code and disposing the bloc
-  void _navigateToDetail(BuildContext context) {
+// a function that handles the navigation code and disposing the bloc
+  void _navigateToDetail(BuildContext context, Image poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);
     Navigator.of(context)
@@ -28,38 +28,48 @@ class FavoriteItem extends StatelessWidget {
               value: trailerBloc,
               child: DetailScreen(),
             ),
-            settings: RouteSettings(arguments: movie),
+            settings: RouteSettings(arguments: [movie, poster]),
           ),
         )
         .then((_) => trailerBloc.dispose);
   }
 
+  Image _cachePoster() {
+    return Image.network(
+      '${TmdbApi.coverImagePath}${movie.posterPath}',
+      loadingBuilder: (BuildContext context, Widget child,
+          ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Center(
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes
+                : null,
+          ),
+        );
+      },
+      fit: BoxFit.cover,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final favoritesBloc = Provider.of<FavoritesBloc>(context);
+    final poster = _cachePoster();
+
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
-        onTap: () => _navigateToDetail(context),
+        onTap: () => _navigateToDetail(context, poster),
         child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.network(
-                '${TmdbApi.movieImagePath}${movie.posterPath}',
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
-                          : null,
-                    ),
-                  );
-                },
-                scale: 2,
+              Image(
+                image: poster.image,
+                height: 150,
+                width: 110,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

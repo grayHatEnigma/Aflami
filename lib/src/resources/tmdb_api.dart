@@ -67,6 +67,7 @@ Improved Api Calls
   }
 
 // ############# core request and handling exceptions functions ############
+
   Future _getParsedJson(url) async {
     var parsedJson;
     try {

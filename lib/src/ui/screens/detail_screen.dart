@@ -18,6 +18,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   Movie movie;
+  Image poster;
   TrailerBloc trailerBloc;
   FavoritesBloc favoritesBloc;
   bool isFavorite;
@@ -27,7 +28,9 @@ class _DetailScreenState extends State<DetailScreen> {
     super.didChangeDependencies();
     trailerBloc = Provider.of<TrailerBloc>(context);
     favoritesBloc = Provider.of<FavoritesBloc>(context);
-    movie = ModalRoute.of(context).settings.arguments as Movie;
+    final arguments = ModalRoute.of(context).settings.arguments as List;
+    movie = arguments[0] as Movie;
+    poster = arguments[1] as Image;
     favoritesBloc.checkMovie(movie.id);
   }
 
@@ -81,25 +84,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: movie.hashCode,
-                    child: movie.posterPath == null
-                        ? Container()
-                        : Image.network(
-                            '${TmdbApi.coverImagePath}${movie.posterPath}',
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes
-                                      : null,
-                                ),
-                              );
-                            },
-                            fit: BoxFit.cover,
-                          ),
+                    child: movie.posterPath == null ? Container() : poster,
                   ),
                 ),
               ),
@@ -146,7 +131,14 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
                 Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
                 Text(movie.overview),
-                Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 30, bottom: 25),
+                    width: 150,
+                    height: 1,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
                 Text(
                   "Trailer",
                   style: TextStyle(
@@ -194,34 +186,16 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget trailerLayout(TrailerModel data) {
-    if (data.trailers.length > 1) {
-      return Container(
-        height: 500,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            trailerItem(data, 0),
-            Container(
-              width: 200,
-              height: 1.25,
-              color: Theme.of(context).primaryColor,
-            ),
-            trailerItem(data, 1),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        height: 250,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            trailerItem(data, 0),
-          ],
-        ),
-      );
-    }
+    // Show only the first result in the trailer model
+    return Container(
+      height: 350,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          trailerItem(data, 0),
+        ],
+      ),
+    );
   }
 
   trailerItem(TrailerModel data, int index) {
