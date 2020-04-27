@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc_base.dart';
 
@@ -43,11 +44,16 @@ class FavoritesBloc extends BlocBase {
   StreamController<int> _checkMovieController = StreamController.broadcast();
   Function(int) get checkMovie => _checkMovieController.sink.add;
 
-  // constructor
+  // ########### Constructor ##############
   FavoritesBloc() {
     _favoriteAddController.stream.listen(_handleAddFavorite);
     _favoriteRemoveController.stream.listen(_handleRemoveFavorite);
     _checkMovieController.stream.listen(_handleMovieCheck);
+
+    _readFromSharedPreferences().then((value) {
+      _favorites = value;
+      _notify();
+    });
   }
 
 // ############# Handling Logic #################
@@ -58,6 +64,7 @@ class FavoritesBloc extends BlocBase {
   void _handleAddFavorite(movieId) {
     // add the movie id to the list
     _favorites.add(movieId);
+    _saveToSharedPreferences(_favorites);
 
     //
     _notify();
@@ -66,6 +73,7 @@ class FavoritesBloc extends BlocBase {
   void _handleRemoveFavorite(movieId) {
     // remove the movie id from the list
     _favorites.remove(movieId);
+    _saveToSharedPreferences(_favorites);
 
     //
     _notify();
@@ -85,5 +93,35 @@ class FavoritesBloc extends BlocBase {
     _favoritesController.close();
     _isFavoriteController.close();
     _checkMovieController.close();
+  }
+
+  // ######## Shared Prefrences #########
+  Future<SharedPreferences> get _sharedPreferences async =>
+      await SharedPreferences.getInstance();
+
+  Future<Set<int>> _readFromSharedPreferences() async {
+    final shared = await _sharedPreferences;
+    final idsList = shared.getStringList('moviesIds');
+    if (idsList != null) {
+      return idsList
+          .map(
+            (id) => int.parse(id),
+          )
+          .toSet();
+    } else {
+      return {};
+    }
+  }
+
+  void _saveToSharedPreferences(Set<int> ids) async {
+    final shared = await _sharedPreferences;
+    shared.setStringList(
+      'moviesIds',
+      ids
+          .map(
+            (id) => id.toString(),
+          )
+          .toList(),
+    );
   }
 }
