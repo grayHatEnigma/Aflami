@@ -64,9 +64,9 @@ class FavoritesBloc extends BlocBase {
         // fetch the data from the api for the first time
         for (String id in ids) {
           final movie = await _repository.fetchMovie(id);
-          print(movie.id);
           _favorites.add(movie);
         }
+        print('Favorites fetching done!');
         // notify all the listning widgets
         _notify();
       }
@@ -90,7 +90,8 @@ class FavoritesBloc extends BlocBase {
 
   void _handleRemoveFavorite(movie) {
     // remove the movie id from the list
-    _favorites.remove(movie);
+    _favorites.removeWhere((item) => item.id == movie.id);
+
     _saveToSharedPreferences(_favorites);
 
     //

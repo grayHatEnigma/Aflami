@@ -15,6 +15,21 @@ class Movie {
     _releaseDate = result['release_date'];
   }
 
+  Movie.fromString(String encoded) {
+    final encodedProps = encoded.split(',').toList();
+    _id = encodedProps[0];
+    _voteAverage = num.parse(encodedProps[1]);
+    _title = encodedProps[2];
+    _posterPath = encodedProps[3];
+    _overview = encodedProps[4];
+    _releaseDate = encodedProps[5];
+  }
+
+  @override
+  String toString() {
+    return '$_id,$_voteAverage,$_title,$_posterPath,$_overview,$_releaseDate';
+  }
+
   String get releaseDate => _releaseDate;
 
   String get overview => _overview;
