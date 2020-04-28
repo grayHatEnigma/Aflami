@@ -10,11 +10,9 @@ import '../../models/movie.dart';
 
 class FavoriteItem extends StatelessWidget {
   final Movie movie;
-  final Function onRemove;
 
   FavoriteItem({
     @required this.movie,
-    @required this.onRemove,
   });
 
 // a function that handles the navigation code and disposing the bloc
@@ -102,8 +100,7 @@ class FavoriteItem extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
                 onPressed: () {
-                  onRemove();
-                  favoritesBloc.inRemoveFavorite(movie.id);
+                  favoritesBloc.inRemoveFavorite(movie);
                 },
               )
             ]),

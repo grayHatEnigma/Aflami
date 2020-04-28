@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/favorite_item.dart';
 import '../../blocs/favorites_bloc.dart';
-import '../../blocs/movie_detail_bloc.dart';
+
 import '../../models/movie.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -12,7 +12,7 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final favoritesBloc = Provider.of<FavoritesBloc>(context);
-    final movieDetailBloc = Provider.of<MovieDetailBloc>(context);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -25,39 +25,29 @@ class FavoritesScreen extends StatelessWidget {
             FavoriteButton(onTap: null),
           ],
         ),
-        body: StreamBuilder<List<int>>(
+        body: StreamBuilder<List<Movie>>(
             stream: favoritesBloc.outFavorites,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                movieDetailBloc.fetchMovies(snapshot.data);
-                return StreamBuilder<List<Movie>>(
-                    stream: movieDetailBloc.movies,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return ListView.builder(
-                          itemBuilder: (context, index) {
-                            return FavoriteItem(
-                                movie: snapshot.data[index],
-                                onRemove: () {
-                                  snapshot.data.removeAt(index);
-                                });
-                          },
-                          itemCount: snapshot.data.length,
-                        );
-                      } else
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text('Loading ...'),
-                              SizedBox(height: 10),
-                              CircularProgressIndicator(),
-                            ],
-                          ),
-                        );
-                    });
+                return ListView.builder(
+                  itemBuilder: (context, index) {
+                    return FavoriteItem(
+                      movie: snapshot.data[index],
+                    );
+                  },
+                  itemCount: snapshot.data.length,
+                );
               } else
-                return Container();
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text('Loading ...'),
+                      SizedBox(height: 10),
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                );
             }),
       ),
     );

@@ -10,14 +10,14 @@ class TrailerBloc extends BlocBase {
   final _repository = Repository();
 
   // Controllers
-  final _movieIdController = StreamController<int>();
+  final _movieIdController = StreamController<String>();
   final _trailerController = StreamController<TrailerModel>();
 
   // streams
   Stream<TrailerModel> get trailers => _trailerController.stream;
 
   // sinks
-  Function(int) get findTrailers => _movieIdController.sink.add;
+  Function(String) get findTrailers => _movieIdController.sink.add;
 
   // Constructor
   TrailerBloc() {

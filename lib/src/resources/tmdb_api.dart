@@ -29,14 +29,14 @@ Improved Api Calls
 */
 
   //  a function to fectch movie detail for favorites screen
-  Future<Movie> fetchMovieDetail(int movieId) async {
+  Future<Movie> fetchMovie(String movieId) async {
     String movieDetailUrl = 'https://$baseUrl/3/movie/$movieId?api_key=$apiKey';
     final parsedJson = await _getParsedJson(movieDetailUrl);
     return Movie(parsedJson);
   }
 
 // a function to fetch movie trailers given movie id
-  Future<TrailerModel> fetchTrailersResponse(int movieId) async {
+  Future<TrailerModel> fetchTrailersResponse(String movieId) async {
     String movieTrailerUrl =
         'https://$baseUrl/3/movie/$movieId/videos?api_key=$apiKey';
     final parsedJson = await _getParsedJson(movieTrailerUrl);

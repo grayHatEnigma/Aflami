@@ -55,8 +55,8 @@ class _DetailScreenState extends State<DetailScreen> {
                           return GestureDetector(
                             onTap: () {
                               snapshot.data
-                                  ? favoritesBloc.inRemoveFavorite(movie.id)
-                                  : favoritesBloc.inAddFavorite(movie.id);
+                                  ? favoritesBloc.inRemoveFavorite(movie)
+                                  : favoritesBloc.inAddFavorite(movie);
                               favoritesBloc.checkMovie(movie.id);
                             },
                             child: CircleAvatar(

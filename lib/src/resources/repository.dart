@@ -21,10 +21,10 @@ class Repository {
       _tmdbApiProvider.fetchMoviesResponse(pageIndex: pageIndex.toString());
 
 // fetch trailers list from the api
-  Future<TrailerModel> fetchTrailersResponse(int movieId) =>
+  Future<TrailerModel> fetchTrailersResponse(String movieId) =>
       _tmdbApiProvider.fetchTrailersResponse(movieId);
 
 // fetch movie detail for favorites screen
-  Future<Movie> fetchMovieDetail(int movieId) =>
-      _tmdbApiProvider.fetchMovieDetail(movieId);
+  Future<Movie> fetchMovie(String movieId) =>
+      _tmdbApiProvider.fetchMovie(movieId);
 }

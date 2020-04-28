@@ -1,5 +1,5 @@
 class Movie {
-  int _id;
+  String _id;
   num _voteAverage;
   String _title;
   String _posterPath;
@@ -7,7 +7,7 @@ class Movie {
   String _releaseDate;
 
   Movie(result) {
-    _id = result['id'];
+    _id = result['id'].toString();
     _voteAverage = result['vote_average'];
     _title = result['title'];
     _posterPath = result['poster_path'];
@@ -25,5 +25,5 @@ class Movie {
 
   num get voteAverage => _voteAverage;
 
-  int get id => _id;
+  String get id => _id;
 }
