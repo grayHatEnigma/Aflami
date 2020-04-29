@@ -56,20 +56,11 @@ class FavoritesBloc extends BlocBase {
     _favoriteRemoveController.stream.listen(_handleRemoveFavorite);
     _checkMovieController.stream.listen(_handleMovieCheck);
 
-    _readFromSharedPreferences().then((ids) async {
-      if (ids.length > 0) {
-        // to update the favorites counter - immediatly - after reading
-        _inTotalFavorites.add(ids.length);
-
-        // fetch the data from the api for the first time
-        for (String id in ids) {
-          final movie = await _repository.fetchMovie(id);
-          _favorites.add(movie);
-        }
-        print('Favorites fetching done!');
-        // notify all the listning widgets
-        _notify();
-      }
+    _readFromSharedPreferences().then((movies) async {
+      _favorites = movies;
+      print('Favorites fetching done!');
+      // notify all the listning widgets
+      _notify();
     });
   }
 
@@ -118,11 +109,15 @@ class FavoritesBloc extends BlocBase {
   Future<SharedPreferences> get _sharedPreferences async =>
       await SharedPreferences.getInstance();
 
-  Future<Set<String>> _readFromSharedPreferences() async {
+  Future<Set<Movie>> _readFromSharedPreferences() async {
     final shared = await _sharedPreferences;
-    final idsList = shared.getStringList('moviesIds');
-    if (idsList != null) {
-      return idsList.toSet();
+    final list = shared.getStringList('movies');
+    if (list != null) {
+      return list
+          .map(
+            (encoded) => Movie.fromString(encoded),
+          )
+          .toSet();
     } else {
       return {};
     }
@@ -131,10 +126,10 @@ class FavoritesBloc extends BlocBase {
   void _saveToSharedPreferences(Set<Movie> favorites) async {
     final shared = await _sharedPreferences;
     shared.setStringList(
-      'moviesIds',
+      'movies',
       favorites
           .map(
-            (movie) => movie.id,
+            (movie) => movie.toString(),
           )
           .toList(),
     );
