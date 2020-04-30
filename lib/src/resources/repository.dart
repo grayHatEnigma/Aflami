@@ -1,5 +1,6 @@
 import 'tmdb_api.dart';
 import '../models/response.dart';
+import '../models/genres.dart';
 import '../models/trailer.dart';
 import '../models/movie.dart';
 
@@ -16,9 +17,13 @@ class Repository {
     _tmdbApiProvider = TmdbApi();
   }
 
+// fetch genres list
+  Future<Genres> fetchGenres() => _tmdbApiProvider.fetchGenres();
+
 // fetch movies list from the api
-  Future<ResponseModel> fetchMoviesResponse(int pageIndex) =>
-      _tmdbApiProvider.fetchMoviesResponse(pageIndex: pageIndex.toString());
+  Future<ResponseModel> fetchMoviesResponse(int pageIndex, int genre) =>
+      _tmdbApiProvider.fetchMoviesResponse(
+          pageIndex: pageIndex.toString(), genre: genre);
 
 // fetch trailers list from the api
   Future<TrailerModel> fetchTrailersResponse(String movieId) =>

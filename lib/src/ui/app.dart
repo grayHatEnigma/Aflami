@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'screens/favorites_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/filters_screen.dart';
+import '../blocs/genres_bloc.dart';
 import '../blocs/response_bloc.dart';
 import '../blocs/favorites_bloc.dart';
 
@@ -27,6 +29,7 @@ class App extends StatelessWidget {
         theme: ThemeData(
           primaryColor: Colors.amber,
           backgroundColor: Colors.black,
+          canvasColor: Colors.grey,
           textTheme: TextTheme(
             title: TextStyle(
                 color: Colors.black,
@@ -40,6 +43,11 @@ class App extends StatelessWidget {
           HomeScreen.routeName: (context) => HomeScreen(),
           SplashScreen.routeName: (context) => SplashScreen(),
           FavoritesScreen.routeName: (context) => FavoritesScreen(),
+          FiltersScreen.routeName: (context) => Provider(
+                child: FiltersScreen(),
+                create: (contex) => GenresBloc(),
+                dispose: (context, genresBloc) => genresBloc.dispose(),
+              ),
         },
         initialRoute: SplashScreen.routeName,
       ),

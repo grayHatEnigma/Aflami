@@ -7,6 +7,7 @@ import 'exceptions.dart';
 import '../models/response.dart';
 import '../models/trailer.dart';
 import '../models/movie.dart';
+import '../models/genres.dart';
 
 /*
 This is where the requests to The Movie DB is done
@@ -18,15 +19,22 @@ class TmdbApi {
   String baseUrl = 'api.themoviedb.org';
   String path = '3/discover/movie';
   String apiKey = '28fe1345095e5381abd32b0578210b0d';
+  String genresPath = '/3/genre/movie/list';
 
   static final coverImagePath = 'https://image.tmdb.org/t/p/w500';
-  static final movieImagePath = 'https://image.tmdb.org/t/p/w200';
 
 /*  
 
 Improved Api Calls 
 
 */
+
+  // a function to fetch genres list
+  Future<Genres> fetchGenres() async {
+    String genresUrl = 'https://$baseUrl$genresPath?api_key=$apiKey';
+    final parsedJson = await _getParsedJson(genresUrl);
+    return Genres.fromJson(parsedJson);
+  }
 
   //  a function to fectch movie detail for favorites screen
   Future<Movie> fetchMovie(String movieId) async {
@@ -45,7 +53,7 @@ Improved Api Calls
 
   // a function to fetch movies list for home screen
   Future<ResponseModel> fetchMoviesResponse(
-      {String language: 'en-US', String pageIndex}) async {
+      {String language: 'en-US', String pageIndex, int genre}) async {
     // request url and the query parameters
     var uri = Uri.https(
       baseUrl,
@@ -55,9 +63,9 @@ Improved Api Calls
         'language': language,
         'include_adult': 'false',
         'page': '$pageIndex',
+        'with_genres': '$genre',
       },
     );
-
     final parsedJson = await _getParsedJson(uri);
     // addtional delay for slow connections
     await Future.delayed(
@@ -66,7 +74,7 @@ Improved Api Calls
     return ResponseModel.fromJson(parsedJson);
   }
 
-// ############# core request and handling exceptions functions ############
+// ############# routines to send api requests and handle exceptions  ############
 
   Future _getParsedJson(url) async {
     var parsedJson;

@@ -98,7 +98,7 @@ class FavoriteItem extends StatelessWidget {
                 ],
               ),
               IconButton(
-                icon: Icon(Icons.remove, color: Theme.of(context).primaryColor),
+                icon: Icon(Icons.close, color: Theme.of(context).primaryColor),
                 onPressed: () {
                   favoritesBloc.inRemoveFavorite(movie);
                 },

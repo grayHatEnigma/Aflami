@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'favorites_screen.dart';
+import 'filters_screen.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
@@ -40,6 +41,13 @@ class HomeScreen extends StatelessWidget {
                 Navigator.pushNamed(context, FavoritesScreen.routeName);
               }),
             ),
+            Center(
+              child: IconButton(
+                icon: const Icon(Icons.more_horiz),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(FiltersScreen.routeName),
+              ),
+            )
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
