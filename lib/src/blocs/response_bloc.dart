@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
+
 import 'bloc_base.dart';
 import '../models/response.dart';
 import '../resources/repository.dart';
@@ -8,7 +10,7 @@ class ResponseBloc extends BlocBase {
   // Base State
   // inital page index state and movie genre
   int _pageIndex = 1;
-  int _genre = 28;
+  int _genre = 0;
 
   // Thsi should be injected
   final _repository = Repository();
@@ -29,14 +31,13 @@ class ResponseBloc extends BlocBase {
   // Controllers
   final _moviesController = StreamController<ResponseModel>();
   final _pageIndexController = StreamController<ResponseEvent>();
-  final _movieGenreController = StreamController<int>();
+  final _movieGenreController = PublishSubject<int>();
   final _indexController = StreamController<int>();
 
   // streams
   Stream<ResponseModel> get allMovies => _moviesController.stream;
   Stream<int> get currentIndex => _indexController.stream;
-
-  /// maybe we will need a stream of movie genre
+  Stream<int> get moviesGenre => _movieGenreController.stream;
 
   // sinks
   Function(ResponseEvent) get dispath => _pageIndexController.sink.add;

@@ -63,7 +63,7 @@ Improved Api Calls
         'language': language,
         'include_adult': 'false',
         'page': '$pageIndex',
-        'with_genres': '$genre',
+        genre == 0 ? '' : 'with_genres': '$genre',
       },
     );
     final parsedJson = await _getParsedJson(uri);

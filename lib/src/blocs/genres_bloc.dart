@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
+
 import '../resources/repository.dart';
 import '../models/genres.dart';
 
@@ -10,7 +12,7 @@ class GenresBloc extends BlocBase {
 
   // controller to fetch all genres list for filters screen
   // it will expose a stream only
-  final _genresController = StreamController<Genres>();
+  final _genresController = BehaviorSubject<Genres>();
   Stream<Genres> get genres => _genresController.stream;
 
 // constructor

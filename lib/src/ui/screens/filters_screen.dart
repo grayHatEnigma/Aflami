@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -17,86 +16,81 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  Genre movieGenre = Genre(28, 'Action');
+  /*
+   lastIndex here is a trick  to prevents unnecessary calls to the api,
+   when the user simply navigates through the picker wheel.
+   it will force the picker to only make the api request 
+   - only - when the item index stays the same after 1 second delay period.
+  */
+  int lastIndex;
+  Color selectionColor;
+
   @override
   Widget build(BuildContext context) {
     final genresBloc = Provider.of<GenresBloc>(context);
     final responseBloc = Provider.of<ResponseBloc>(context);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
-      appBar: AppBar(
-        title: Text('Filters'),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).backgroundColor,
+        appBar: AppBar(
+          title: Text('Filters', style: Theme.of(context).textTheme.title),
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Choose Movie Genre',
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.w500),
+            ),
+            Container(
+              height: 250,
+              child: StreamBuilder<Genres>(
+                  stream: genresBloc.genres,
+                  initialData: Genres.initialState(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      final List<Genre> genres = snapshot.data.genres;
+                      return CupertinoPicker(
+                        backgroundColor: Theme.of(context).backgroundColor,
+                        useMagnifier: true,
+                        magnification: 1.3,
+                        diameterRatio: 2,
+                        children:
+                            //FIXME : unexpected behaviour of first item alignment
+                            genres
+                                .map(
+                                  (movieGenre) => Text(
+                                    movieGenre.name,
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                )
+                                .toList(),
+                        onSelectedItemChanged: (index) {
+                          lastIndex = index;
+                          Future.delayed(
+                            Duration(seconds: 1),
+                            () {
+                              if (index == lastIndex) {
+                                responseBloc.chooseGenre(genres[index].id);
+                              }
+                            },
+                          );
+                        },
+                        itemExtent: 50,
+                      );
+                    } else {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
+            ),
+          ],
+        ),
       ),
-      body: StreamBuilder<Genres>(
-          stream: genresBloc.genres,
-          initialData: Genres.initialState(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData && snapshot.data.genres.length > 0) {
-              print(snapshot.hasData);
-              print(snapshot.data.genres);
-              final List<Genre> genres = snapshot.data.genres;
-
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Choose Movie Genre',
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Center(
-                      child: Container(
-                    height: 250,
-                    child: CupertinoPicker(
-                      backgroundColor: Theme.of(context).backgroundColor,
-                      useMagnifier: true,
-                      magnification: 1.3,
-                      children: genres
-                          .map(
-                            (movieGenre) => Text(
-                              movieGenre.name,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
-                          .toList(),
-                      onSelectedItemChanged: (item) =>
-                          responseBloc.chooseGenre(genres[item].id),
-                      itemExtent: 50,
-                    ),
-                  )),
-                ],
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          }),
     );
   }
 }
-
-/*
-
-StreamBuilder<Genres>(
-        stream: genresBloc.genres,
-        initialData: Genres.initialState(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return Container(
-              child: ListView.builder(
-                itemBuilder: (context, index) =>
-                    Text(snapshot.data.genres[index].name),
-                itemCount: snapshot.data.genres.length,
-              ),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-*/

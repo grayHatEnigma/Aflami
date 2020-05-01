@@ -23,6 +23,10 @@ class App extends StatelessWidget {
           create: (context) => FavoritesBloc(),
           dispose: (context, favoritesBloc) => favoritesBloc.dispose(),
         ),
+        Provider(
+          create: (contex) => GenresBloc(),
+          dispose: (context, genresBloc) => genresBloc.dispose(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -43,11 +47,7 @@ class App extends StatelessWidget {
           HomeScreen.routeName: (context) => HomeScreen(),
           SplashScreen.routeName: (context) => SplashScreen(),
           FavoritesScreen.routeName: (context) => FavoritesScreen(),
-          FiltersScreen.routeName: (context) => Provider(
-                child: FiltersScreen(),
-                create: (contex) => GenresBloc(),
-                dispose: (context, genresBloc) => genresBloc.dispose(),
-              ),
+          FiltersScreen.routeName: (context) => FiltersScreen(),
         },
         initialRoute: SplashScreen.routeName,
       ),

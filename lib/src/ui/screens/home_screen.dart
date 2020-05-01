@@ -7,7 +7,9 @@ import 'filters_screen.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
+import '../../blocs/genres_bloc.dart';
 import '../../models/response.dart';
+import '../../models/genres.dart';
 
 class HomeScreen extends StatelessWidget {
   static final routeName = 'home';
@@ -50,68 +52,37 @@ class HomeScreen extends StatelessWidget {
             )
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: 1,
-            backgroundColor: Colors.black54,
-            unselectedItemColor: Theme.of(context).primaryColor,
-            onTap: (index) {
-              if (index == 0) {
-                responseBloc.dispath(ResponseEvent.previous);
-              } else if (index == 2) {
-                responseBloc.dispath(ResponseEvent.next);
-              }
-            },
-            items: [
-              BottomNavigationBarItem(
-                title: Text('previous'),
-                icon: Icon(
-                  Icons.navigate_before,
-                  size: 31,
-                ),
+        bottomNavigationBar: PageBottomBar(responseBloc: responseBloc),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            StreamBuilder<int>(
+                stream: responseBloc.moviesGenre,
+                initialData: 0,
+                builder: (context, snapshot) {
+                  return GenreSummary(genreId: snapshot.data);
+                }),
+            Expanded(
+              child: StreamBuilder(
+                stream: responseBloc.allMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return GridBuilder(response: snapshot);
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        snapshot.error.toString(),
+                      ),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                },
               ),
-              BottomNavigationBarItem(
-                title: Container(),
-                icon: StreamBuilder<Object>(
-                    stream: responseBloc.currentIndex,
-                    initialData: '1',
-                    builder: (context, snapshot) {
-                      return CircleAvatar(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        child: Text(
-                          snapshot.data.toString(),
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                      );
-                    }),
-              ),
-              BottomNavigationBarItem(
-                title: Text('next'),
-                icon: Icon(
-                  Icons.navigate_next,
-                  size: 31,
-                ),
-              ),
-            ]),
-        body: StreamBuilder(
-          stream: responseBloc.allMovies,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return GridBuilder(response: snapshot);
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  snapshot.error.toString(),
-                ),
-              );
-            } else {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },
+            ),
+          ],
         ),
       ),
     );
@@ -132,5 +103,95 @@ class GridBuilder extends StatelessWidget {
       },
       itemCount: response.data.results.length,
     );
+  }
+}
+
+class GenreSummary extends StatelessWidget {
+  final int genreId;
+
+  const GenreSummary({this.genreId});
+
+  @override
+  Widget build(BuildContext context) {
+    final genresBloc = Provider.of<GenresBloc>(context);
+
+    return Container(
+      width: double.infinity,
+      height: 30.0,
+      decoration: BoxDecoration(
+        color: Colors.black87,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          StreamBuilder<Genres>(
+              stream: genresBloc.genres,
+              initialData: Genres.initialState(),
+              builder: (context, snapshot) {
+                final genresList = snapshot.data;
+                return Text(genresList.findById(genreId),
+                    style: TextStyle(
+                      fontSize: 17,
+                    ));
+              }),
+        ],
+      ),
+    );
+  }
+}
+
+// to build the bottom navigation bar
+class PageBottomBar extends StatelessWidget {
+  final ResponseBloc responseBloc;
+
+  const PageBottomBar({@required this.responseBloc});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+        currentIndex: 1,
+        backgroundColor: Colors.black54,
+        unselectedItemColor: Theme.of(context).primaryColor,
+        onTap: (index) {
+          if (index == 0) {
+            responseBloc.dispath(ResponseEvent.previous);
+          } else if (index == 2) {
+            responseBloc.dispath(ResponseEvent.next);
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            title: Text('previous'),
+            icon: Icon(
+              Icons.navigate_before,
+              size: 31,
+            ),
+          ),
+          BottomNavigationBarItem(
+            title: Container(),
+            icon: StreamBuilder<Object>(
+                stream: responseBloc.currentIndex,
+                initialData: '1',
+                builder: (context, snapshot) {
+                  return CircleAvatar(
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      snapshot.data.toString(),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                  );
+                }),
+          ),
+          BottomNavigationBarItem(
+            title: Text('next'),
+            icon: Icon(
+              Icons.navigate_next,
+              size: 31,
+            ),
+          ),
+        ]);
   }
 }

@@ -16,7 +16,7 @@ class Movie {
   }
 
   Movie.fromString(String encoded) {
-    final encodedProps = encoded.split(',').toList();
+    final encodedProps = encoded.split('%!%').toList();
     _id = encodedProps[0];
     _voteAverage = num.parse(encodedProps[1]);
     _title = encodedProps[2];
@@ -26,9 +26,15 @@ class Movie {
   }
 
   @override
-  String toString() {
-    return '$_id,$_voteAverage,$_title,$_posterPath,$_overview,$_releaseDate';
-  }
+  String toString() =>
+      '$_id%!%$_voteAverage%!%$_title%!%$_posterPath%!%$_overview%!%$_releaseDate';
+
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) || this._id == other._id;
+
+  @override
+  int get hashCode => int.parse(_id);
 
   String get releaseDate => _releaseDate;
 
