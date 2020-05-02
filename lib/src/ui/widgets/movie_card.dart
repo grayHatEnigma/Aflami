@@ -9,10 +9,20 @@ import '../../models/movie.dart';
 
 class MovieCard extends StatelessWidget {
   final Movie movie;
-
   const MovieCard({this.movie});
 
-  // a function that handles the navigation code and disposing the bloc
+  // a function that handles the navigation code and disposing the trailer bloc
+  /*
+  I do this here ( trailer fetching )
+  because I don't want to make the api request in either 
+  didChangeDependecies() or build() methods in DetailScreen 
+  because these methods may be called multiple time via the framework
+  for various reasons.
+
+  And here I used a little trick (using .then() on the Navigator Future) 
+  to insure the disposing of the trailer bloc when the user comes back to the home screen
+  */
+
   void _navigateToDetail(BuildContext context, Image poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);

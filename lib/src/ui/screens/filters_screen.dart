@@ -8,8 +8,6 @@ import '../../blocs/genres_bloc.dart';
 import '../../models/genres.dart';
 import '../../models/genre.dart';
 
-// FIXME : handle errors here
-
 class FiltersScreen extends StatefulWidget {
   static final routeName = 'filters';
 
@@ -59,16 +57,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
                         useMagnifier: true,
                         magnification: 1.3,
                         diameterRatio: 2,
-                        children:
-                            //FIXME : unexpected behaviour of first item alignment
-                            genres
-                                .map(
-                                  (movieGenre) => Text(
-                                    movieGenre.name,
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                )
-                                .toList(),
+                        children: genres
+                            .map(
+                              (movieGenre) => Text(
+                                movieGenre.name,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )
+                            .toList(),
                         onSelectedItemChanged: (index) {
                           lastIndex = index;
                           Future.delayed(
@@ -82,11 +78,14 @@ class _FiltersScreenState extends State<FiltersScreen> {
                         },
                         itemExtent: 50,
                       );
-                    } else {
+                    } else if (snapshot.hasError) {
                       return Center(
-                        child: CircularProgressIndicator(),
+                        child: Text('Error, loading genres list'),
                       );
                     }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
                   }),
             ),
           ],

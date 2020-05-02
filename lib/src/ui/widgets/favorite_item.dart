@@ -8,8 +8,6 @@ import '../../blocs/favorites_bloc.dart';
 import '../../resources/tmdb_api.dart';
 import '../../models/movie.dart';
 
-// FIXME : for some reson it doesn't show image loading indicator
-// figure it out
 class FavoriteItem extends StatelessWidget {
   final Movie movie;
 
@@ -17,7 +15,7 @@ class FavoriteItem extends StatelessWidget {
     @required this.movie,
   });
 
-// a function that handles the navigation code and disposing the bloc
+// a function that handles the navigation code and disposing the trailer bloc
   void _navigateToDetail(BuildContext context, Image poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);
@@ -66,8 +64,8 @@ class FavoriteItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image(
-                image: poster.image,
+              Container(
+                child: poster,
                 height: 150,
                 width: 110,
               ),
