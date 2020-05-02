@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
             ),
             Center(
               child: IconButton(
-                icon: const Icon(Icons.more_horiz),
+                icon: const Icon(Icons.more_horiz, size: 32),
                 onPressed: () =>
                     Navigator.of(context).pushNamed(FiltersScreen.routeName),
               ),

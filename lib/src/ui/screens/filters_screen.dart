@@ -23,10 +23,10 @@ class _FiltersScreenState extends State<FiltersScreen> {
    - only - when the item index stays the same after 1 second delay period.
   */
   int lastIndex;
-  Color selectionColor;
 
   @override
   Widget build(BuildContext context) {
+    // BLoCs
     final genresBloc = Provider.of<GenresBloc>(context);
     final responseBloc = Provider.of<ResponseBloc>(context);
 
@@ -40,7 +40,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Choose Movie Genre',
+              'Select Movie Genre',
               style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.w500),
@@ -80,7 +80,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                       );
                     } else if (snapshot.hasError) {
                       return Center(
-                        child: Text('Error, loading genres list'),
+                        child: Text('Error: loading genres list'),
                       );
                     }
                     return Center(
@@ -88,6 +88,18 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     );
                   }),
             ),
+            IconButton(
+              tooltip: 'Select',
+              color: Theme.of(context).primaryColor,
+              onPressed: () => Navigator.pop(context),
+              icon: Icon(Icons.subdirectory_arrow_right, size: 40),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            Text('Select',
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor, fontSize: 16))
           ],
         ),
       ),
