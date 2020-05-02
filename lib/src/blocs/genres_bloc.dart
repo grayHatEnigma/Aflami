@@ -15,16 +15,40 @@ class GenresBloc extends BlocBase {
   final _genresController = BehaviorSubject<Genres>();
   Stream<Genres> get genres => _genresController.stream;
 
+  final _genresEventController = PublishSubject<GenresEvent>();
+  Function(GenresEvent) get dispatch => _genresEventController.sink.add;
+
 // constructor
   GenresBloc() {
+    _genresEventController.stream.listen(_handleGenresEvent);
+
+    // fetch genres list on app start
+    _fetchGenresList();
+  }
+
+  void _fetchGenresList() {
     _repository
         .fetchGenres()
-        .then((value) => _genresController.sink.add(value));
+        .then((value) => _genresController.sink.add(value))
+        .catchError((error) {
+      _genresController.sink.addError(error);
+    });
+  }
+
+// ############## Handling ##################
+
+  void _handleGenresEvent(event) {
+    if (event == GenresEvent.retry) {
+      _fetchGenresList();
+    }
   }
 
   @override
   void dispose() {
     print('GenresBloc is disposed');
     _genresController.close();
+    _genresEventController.close();
   }
 }
+
+enum GenresEvent { retry }

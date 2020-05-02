@@ -8,6 +8,8 @@ import '../../blocs/favorites_bloc.dart';
 import '../../resources/tmdb_api.dart';
 import '../../models/movie.dart';
 
+// FIXME : for some reson it doesn't show image loading indicator
+// figure it out
 class FavoriteItem extends StatelessWidget {
   final Movie movie;
 
@@ -102,7 +104,7 @@ class FavoriteItem extends StatelessWidget {
                 onPressed: () {
                   favoritesBloc.inRemoveFavorite(movie);
                 },
-              )
+              ),
             ]),
       ),
     );

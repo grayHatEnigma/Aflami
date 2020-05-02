@@ -29,10 +29,10 @@ class ResponseBloc extends BlocBase {
   }
 
   // Controllers
-  final _moviesController = StreamController<ResponseModel>();
-  final _pageIndexController = StreamController<ResponseEvent>();
+  final _moviesController = PublishSubject<ResponseModel>();
+  final _pageIndexController = PublishSubject<ResponseEvent>();
   final _movieGenreController = PublishSubject<int>();
-  final _indexController = StreamController<int>();
+  final _indexController = BehaviorSubject<int>();
 
   // streams
   Stream<ResponseModel> get allMovies => _moviesController.stream;
@@ -40,13 +40,17 @@ class ResponseBloc extends BlocBase {
   Stream<int> get moviesGenre => _movieGenreController.stream;
 
   // sinks
-  Function(ResponseEvent) get dispath => _pageIndexController.sink.add;
+  Function(ResponseEvent) get dispatch => _pageIndexController.sink.add;
   Function(int) get chooseGenre => _movieGenreController.sink.add;
 
   // a function that make the network request to retrive list of movies with given page index
   Future _fetchResult(int pageIndex, int genre) async {
-    final response = await _repository.fetchMoviesResponse(pageIndex, genre);
-    _moviesController.sink.add(response);
+    try {
+      final response = await _repository.fetchMoviesResponse(pageIndex, genre);
+      _moviesController.sink.add(response);
+    } catch (e) {
+      _moviesController.sink.addError(e);
+    }
   }
 
   // ############ Handling ################
@@ -66,11 +70,12 @@ class ResponseBloc extends BlocBase {
   void _mapResposneEventToState(ResponseEvent event) async {
     if (event == ResponseEvent.next && _pageIndex <= 500) {
       _pageIndex++;
-      _loadAndNotify();
     } else if (event == ResponseEvent.previous && _pageIndex > 1) {
       _pageIndex--;
-      _loadAndNotify();
+    } else if (event == ResponseEvent.home) {
+      _pageIndex = 1;
     }
+    _loadAndNotify();
   }
 
 // ############# routines ###############
@@ -96,4 +101,4 @@ class ResponseBloc extends BlocBase {
   }
 }
 
-enum ResponseEvent { next, previous }
+enum ResponseEvent { next, previous, home, retry }

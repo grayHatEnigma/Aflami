@@ -16,7 +16,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// BLoCs
     final responseBloc = Provider.of<ResponseBloc>(context);
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -52,7 +54,7 @@ class HomeScreen extends StatelessWidget {
             )
           ],
         ),
-        bottomNavigationBar: PageBottomBar(responseBloc: responseBloc),
+        bottomNavigationBar: PageBottomBar(),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -69,11 +71,7 @@ class HomeScreen extends StatelessWidget {
                   if (snapshot.hasData) {
                     return GridBuilder(response: snapshot);
                   } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        snapshot.error.toString(),
-                      ),
-                    );
+                    return ErrorWidget(snapshot.error.toString());
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -89,6 +87,80 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// ####################### Custome Widgets ########################
+
+/// Build Genre. Summary Bar
+class GenreSummary extends StatelessWidget {
+  final int genreId;
+
+  const GenreSummary({this.genreId});
+
+  @override
+  Widget build(BuildContext context) {
+    // BLoCs
+    final responseBloc = Provider.of<ResponseBloc>(context);
+    final genresBloc = Provider.of<GenresBloc>(context);
+
+    return Container(
+      width: double.infinity,
+      height: 30.0,
+      decoration: BoxDecoration(
+        color: Colors.red[900],
+      ),
+      child: StreamBuilder<Genres>(
+          stream: genresBloc.genres,
+          initialData: Genres.initialState(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final genresList = snapshot.data;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(
+                    'Genre.  [ ${genresList.findById(genreId)} ]',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Container(),
+                  StreamBuilder<int>(
+                    stream: responseBloc.currentIndex,
+                    initialData: 1,
+                    builder: (context, snapshot) {
+                      return Text(
+                        'Page  [ ${snapshot.data.toString()} ]',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'No Internet Connection',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+            return Container();
+          }),
+    );
+  }
+}
+
+/*
+
+*/
+
+/// Build Main Grid
 class GridBuilder extends StatelessWidget {
   final AsyncSnapshot<ResponseModel> response;
   const GridBuilder({@required this.response});
@@ -106,92 +178,91 @@ class GridBuilder extends StatelessWidget {
   }
 }
 
-class GenreSummary extends StatelessWidget {
-  final int genreId;
+/*
 
-  const GenreSummary({this.genreId});
+*/
 
-  @override
-  Widget build(BuildContext context) {
-    final genresBloc = Provider.of<GenresBloc>(context);
-
-    return Container(
-      width: double.infinity,
-      height: 30.0,
-      decoration: BoxDecoration(
-        color: Colors.black87,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          StreamBuilder<Genres>(
-              stream: genresBloc.genres,
-              initialData: Genres.initialState(),
-              builder: (context, snapshot) {
-                final genresList = snapshot.data;
-                return Text(genresList.findById(genreId),
-                    style: TextStyle(
-                      fontSize: 17,
-                    ));
-              }),
-        ],
-      ),
-    );
-  }
-}
-
-// to build the bottom navigation bar
+/// Build Bottom Navigation Bar
 class PageBottomBar extends StatelessWidget {
-  final ResponseBloc responseBloc;
-
-  const PageBottomBar({@required this.responseBloc});
-
   @override
   Widget build(BuildContext context) {
+    // BLoCs
+    final responseBloc = Provider.of<ResponseBloc>(context);
     return BottomNavigationBar(
         currentIndex: 1,
         backgroundColor: Colors.black54,
         unselectedItemColor: Theme.of(context).primaryColor,
         onTap: (index) {
           if (index == 0) {
-            responseBloc.dispath(ResponseEvent.previous);
+            responseBloc.dispatch(ResponseEvent.previous);
+          } else if (index == 1) {
+            responseBloc.dispatch(ResponseEvent.home);
           } else if (index == 2) {
-            responseBloc.dispath(ResponseEvent.next);
+            responseBloc.dispatch(ResponseEvent.next);
           }
         },
         items: [
           BottomNavigationBarItem(
-            title: Text('previous'),
+            title: Text('Previous'),
             icon: Icon(
               Icons.navigate_before,
               size: 31,
             ),
           ),
           BottomNavigationBarItem(
-            title: Container(),
-            icon: StreamBuilder<Object>(
-                stream: responseBloc.currentIndex,
-                initialData: '1',
-                builder: (context, snapshot) {
-                  return CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    child: Text(
-                      snapshot.data.toString(),
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  );
-                }),
+            title: Text('Home'),
+            icon: Icon(Icons.home,
+                color: Theme.of(context).primaryColor, size: 31),
           ),
           BottomNavigationBarItem(
-            title: Text('next'),
+            title: Text('Next'),
             icon: Icon(
               Icons.navigate_next,
               size: 31,
             ),
           ),
         ]);
+  }
+}
+
+/*
+
+*/
+
+/// Build Error Widget
+class ErrorWidget extends StatelessWidget {
+  final String errorText;
+
+  ErrorWidget(this.errorText);
+  @override
+  Widget build(BuildContext context) {
+    ///BLoCs
+    final responseBloc = Provider.of<ResponseBloc>(context);
+    final genresBloc = Provider.of<GenresBloc>(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          'Error!',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 23, color: Theme.of(context).primaryColor),
+        ),
+        SizedBox(height: 10),
+        Text(
+          '$errorText',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
+        ),
+        SizedBox(height: 20),
+        RaisedButton(
+            color: Theme.of(context).primaryColor,
+            child: Text('Try Again',
+                style: TextStyle(color: Colors.black, fontSize: 18)),
+            onPressed: () {
+              responseBloc.dispatch(ResponseEvent.retry);
+              genresBloc.dispatch(GenresEvent.retry);
+            })
+      ],
+    );
   }
 }

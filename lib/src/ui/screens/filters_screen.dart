@@ -8,6 +8,8 @@ import '../../blocs/genres_bloc.dart';
 import '../../models/genres.dart';
 import '../../models/genre.dart';
 
+// FIXME : handle errors here
+
 class FiltersScreen extends StatefulWidget {
   static final routeName = 'filters';
 
@@ -49,7 +51,6 @@ class _FiltersScreenState extends State<FiltersScreen> {
               height: 250,
               child: StreamBuilder<Genres>(
                   stream: genresBloc.genres,
-                  initialData: Genres.initialState(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       final List<Genre> genres = snapshot.data.genres;
