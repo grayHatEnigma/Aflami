@@ -16,20 +16,19 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  /*
-   lastIndex here is a trick  to prevents unnecessary calls to the api,
-   when the user simply navigates through the picker wheel.
-   it will force the picker to only make the api request 
-   - only - when the item index stays the same after 1 second delay period.
-  */
-  int lastIndex;
-
+  //
+  int currentGenreId;
+  int newGenreId;
+  //
   @override
   Widget build(BuildContext context) {
     // BLoCs
     final genresBloc = Provider.of<GenresBloc>(context);
     final responseBloc = Provider.of<ResponseBloc>(context);
 
+    //
+    currentGenreId = responseBloc.currentGenreId;
+    //
     return SafeArea(
       child: Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -52,11 +51,16 @@ class _FiltersScreenState extends State<FiltersScreen> {
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       final List<Genre> genres = snapshot.data.genres;
+                      final currentGenre = genres
+                          .firstWhere((genre) => genre.id == currentGenreId);
                       return CupertinoPicker(
                         backgroundColor: Theme.of(context).backgroundColor,
+                        scrollController: FixedExtentScrollController(
+                          initialItem: genres.indexOf(currentGenre),
+                        ),
                         useMagnifier: true,
                         magnification: 1.3,
-                        diameterRatio: 2,
+                        diameterRatio: 1,
                         children: genres
                             .map(
                               (movieGenre) => Text(
@@ -66,15 +70,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                             )
                             .toList(),
                         onSelectedItemChanged: (index) {
-                          lastIndex = index;
-                          Future.delayed(
-                            Duration(seconds: 1),
-                            () {
-                              if (index == lastIndex) {
-                                responseBloc.chooseGenre(genres[index].id);
-                              }
-                            },
-                          );
+                          newGenreId = genres[index].id;
                         },
                         itemExtent: 50,
                       );
@@ -88,18 +84,22 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     );
                   }),
             ),
-            IconButton(
-              tooltip: 'Select',
-              color: Theme.of(context).primaryColor,
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(Icons.subdirectory_arrow_right, size: 40),
-            ),
             SizedBox(
-              height: 5,
+              height: 10,
             ),
-            Text('Select',
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor, fontSize: 16))
+            InkWell(
+              onTap: () {
+                if (newGenreId != currentGenreId && newGenreId != null) {
+                  responseBloc.chooseGenre(newGenreId);
+                }
+                Navigator.pop(context);
+              },
+              child: Text('Select',
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 20,
+                      letterSpacing: 0.75)),
+            )
           ],
         ),
       ),

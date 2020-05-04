@@ -8,9 +8,17 @@ import '../resources/repository.dart';
 
 class ResponseBloc extends BlocBase {
   // Base State
-  // inital page index state and movie genre
+  // inital page index and movie genre
   int _pageIndex = 1;
   int _genre = 0;
+
+  // This getter is to allow the filters screen a - direct - access
+  // to the current selected  genre. id
+  // I know this is a violation to the main BLoC principle
+  // ( only depends on streams in exposing and manuplating data )
+  // but it will save a lot of unesseccary complexity and boilerplate
+  int get currentGenreId => _genre;
+  // So Sorry BLoC :/ :( !
 
   // Thsi should be injected
   final _repository = Repository();
