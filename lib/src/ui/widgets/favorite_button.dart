@@ -20,7 +20,7 @@ class FavoriteButton extends StatelessWidget {
           Icon(
             Icons.favorite,
             color: Colors.black,
-            size: 32,
+            size: 31,
           ),
           Positioned(
             top: -5,
@@ -39,7 +39,7 @@ class FavoriteButton extends StatelessWidget {
                         snapshot.data.toString(),
                         style: TextStyle(
                             color: Colors.white,
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.bold),
                       );
                     }),

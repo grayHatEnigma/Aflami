@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc_base.dart';
 import '../models/response.dart';
@@ -27,7 +28,8 @@ class ResponseBloc extends BlocBase {
   factory ResponseBloc() => instance;
   ResponseBloc._() {
     // fetch initial data on Bloc creation
-    _fetchResult(_pageIndex, _genre);
+    _loadSession();
+    // _fetchResult(_pageIndex, _genre);
 
     // listen to events from index buttons in the home screen
     _pageIndexController.stream.listen(_mapResposneEventToState);
@@ -41,11 +43,12 @@ class ResponseBloc extends BlocBase {
   final _pageIndexController = PublishSubject<ResponseEvent>();
   final _movieGenreController = PublishSubject<int>();
   final _indexController = BehaviorSubject<int>();
+  final _genreIdController = BehaviorSubject<int>();
 
   // streams
   Stream<ResponseModel> get allMovies => _moviesController.stream;
   Stream<int> get currentIndex => _indexController.stream;
-  Stream<int> get moviesGenre => _movieGenreController.stream;
+  Stream<int> get genreId => _genreIdController.stream;
 
   // sinks
   Function(ResponseEvent) get dispatch => _pageIndexController.sink.add;
@@ -82,7 +85,14 @@ class ResponseBloc extends BlocBase {
       _pageIndex--;
     } else if (event == ResponseEvent.home) {
       _pageIndex = 1;
+    } else if (event == ResponseEvent.save) {
+      _saveSession();
+      return;
+    } else if (event == ResponseEvent.load) {
+      _loadSession();
+      return;
     }
+
     _loadAndNotify();
   }
 
@@ -90,6 +100,12 @@ class ResponseBloc extends BlocBase {
   void _loadAndNotify() async {
     // update the page index in home screen
     _indexController.add(_pageIndex);
+
+    //
+    _genreIdController.add(_genre);
+
+    //
+
     // to show a loading bar while we fetch the next page
     _loading();
     // fetch the movie page
@@ -98,6 +114,49 @@ class ResponseBloc extends BlocBase {
 
   void _loading() => _moviesController.sink.add(null);
 
+  void _saveSession() {
+    _saveToSharedPreferences([_genre, _pageIndex]);
+  }
+
+  void _loadSession() async {
+    final session = await _readFromSharedPreferences();
+    if (session.length == 2) {
+      _genre = session[0];
+      _pageIndex = session[1];
+    }
+    // make the api call for the new genre and index notify all interested widgets
+    _loadAndNotify();
+  }
+
+  // ######## Shared Prefrences #########
+  Future<SharedPreferences> get _sharedPreferences async =>
+      await SharedPreferences.getInstance();
+
+  Future<List<int>> _readFromSharedPreferences() async {
+    final shared = await _sharedPreferences;
+    final list = shared.getStringList('session');
+    if (list != null) {
+      return list
+          .map(
+            (value) => int.parse(value),
+          )
+          .toList();
+    }
+    return [];
+  }
+
+  void _saveToSharedPreferences(List<int> session) async {
+    final shared = await _sharedPreferences;
+    shared.setStringList(
+      'session',
+      session
+          .map(
+            (value) => value.toString(),
+          )
+          .toList(),
+    );
+  }
+
   // ################## disposing ###############
   @override
   void dispose() {
@@ -105,8 +164,9 @@ class ResponseBloc extends BlocBase {
     _moviesController.close();
     _pageIndexController.close();
     _indexController.close();
+    _genreIdController.close();
     _movieGenreController.close();
   }
 }
 
-enum ResponseEvent { next, previous, home, retry }
+enum ResponseEvent { next, previous, home, retry, save, load }

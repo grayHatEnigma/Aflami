@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'favorites_screen.dart';
 import 'filters_screen.dart';
@@ -51,7 +52,52 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () =>
                     Navigator.of(context).pushNamed(FiltersScreen.routeName),
               ),
-            )
+            ),
+
+            PopupMenuButton<ResponseEvent>(
+              offset: Offset(20, 45),
+              elevation: 20,
+              color: Colors.red[900],
+              icon: Icon(Icons.save, size: 31),
+              onSelected: (event) {
+                responseBloc.dispatch(event);
+                Fluttertoast.showToast(
+                  msg:
+                      'Your journey has been ${event.toString().split('.').last}ed',
+                  textColor: Colors.white,
+                  backgroundColor: Colors.red,
+                );
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  child: Text(
+                    'Load journey',
+                    style: TextStyle(color: Colors.white, fontSize: 15),
+                  ),
+                  value: ResponseEvent.load,
+                ),
+                PopupMenuItem(
+                    child: Text(
+                      'Save journey',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                    ),
+                    value: ResponseEvent.save),
+              ],
+            ),
+
+            //   Center(
+            //    child: IconButton(
+            //     icon: const Icon(Icons.save, size: 31),
+            //     onPressed: () {
+            //       responseBloc.dispatch(ResponseEvent.save);
+            //       Fluttertoast.showToast(
+            //         msg: 'Your journey has been saved',
+            //         textColor: Colors.white,
+            //         backgroundColor: Colors.red,
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
         ),
         bottomNavigationBar: PageBottomBar(),
@@ -59,7 +105,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             StreamBuilder<int>(
-                stream: responseBloc.moviesGenre,
+                stream: responseBloc.genreId,
                 initialData: 0,
                 builder: (context, snapshot) {
                   return GenreSummary(genreId: snapshot.data);
@@ -111,7 +157,7 @@ class GenreSummary extends StatelessWidget {
           stream: genresBloc.genres,
           initialData: Genres.initialState(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data.genres.length > 1) {
               final genresList = snapshot.data;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -129,7 +175,7 @@ class GenreSummary extends StatelessWidget {
                     initialData: 1,
                     builder: (context, snapshot) {
                       return Text(
-                        'Page  [ ${snapshot.data.toString()} ]',
+                        'Page  [ ${snapshot.data.toString()} / 500 ]',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
@@ -150,7 +196,11 @@ class GenreSummary extends StatelessWidget {
                 ),
               );
             }
-            return Container();
+            return Center(
+                child: Text(
+              'Loading ...',
+              style: TextStyle(fontSize: 15),
+            ));
           }),
     );
   }

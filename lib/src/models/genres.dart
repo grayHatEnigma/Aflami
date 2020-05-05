@@ -6,7 +6,7 @@ class Genres {
   Genres.initialState() {
     _genres = []..insert(
         0,
-        Genre(0, 'All Categories'),
+        Genre(0, 'All'),
       );
   }
 
@@ -16,7 +16,7 @@ class Genres {
             .toList()
               ..insert(
                 0,
-                Genre(0, 'All Categories'),
+                Genre(0, 'All'),
               );
 
   //

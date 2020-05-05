@@ -66,6 +66,7 @@ Improved Api Calls
         genre == 0 ? '' : 'with_genres': '$genre',
       },
     );
+
     final parsedJson = await _getParsedJson(uri);
     // addtional delay for slow connections
     await Future.delayed(

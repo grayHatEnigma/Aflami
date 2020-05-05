@@ -118,9 +118,8 @@ class FavoritesBloc extends BlocBase {
             (encoded) => Movie.fromString(encoded),
           )
           .toSet();
-    } else {
-      return {};
     }
+    return {};
   }
 
   void _saveToSharedPreferences(Set<Movie> favorites) async {

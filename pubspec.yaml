@@ -1,10 +1,10 @@
 name: aflami
-description: Aflami is an awesome movies explorer.
+description: explore the movie world!
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -18,6 +18,7 @@ dependencies:
   youtube_player_flutter: ^6.1.0+7
   provider: ^4.0.5
   shared_preferences: ^0.5.7
+  fluttertoast: ^4.0.1
   
 
   # BLoC Pattern Packages

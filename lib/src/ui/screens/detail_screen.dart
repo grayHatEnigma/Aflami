@@ -5,7 +5,6 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../models/movie.dart';
 import '../../models/trailer.dart';
-import '../../resources/tmdb_api.dart';
 import '../../blocs/trailer_bloc.dart';
 import '../../blocs/favorites_bloc.dart';
 
@@ -188,7 +187,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget trailerLayout(TrailerModel data) {
     // Show only the first result in the trailer model
     return Container(
-      height: 350,
+      height: 300,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
