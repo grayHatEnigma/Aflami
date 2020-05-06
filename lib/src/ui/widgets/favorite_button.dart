@@ -30,7 +30,7 @@ class FavoriteButton extends StatelessWidget {
               elevation: 2.0,
               color: Colors.red,
               child: Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(4.0),
                 child: StreamBuilder<int>(
                     stream: favoritesBloc.outTotalFavorites,
                     initialData: 0,

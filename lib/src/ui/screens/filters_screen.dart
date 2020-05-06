@@ -88,11 +88,14 @@ class FiltersScreen extends StatelessWidget {
                 }
                 Navigator.pop(context);
               },
-              child: Text('Select',
-                  style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontSize: 20,
-                      letterSpacing: 0.75)),
+              child: const Text(
+                'Select',
+                style: const TextStyle(
+                    color: Colors.amber,
+                    fontSize: 20,
+                    letterSpacing: 0.75,
+                    fontWeight: FontWeight.w600),
+              ),
             )
           ],
         ),

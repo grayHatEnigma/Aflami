@@ -22,7 +22,7 @@ class FavoritesScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.title,
           ),
           actions: [
-            FavoriteButton(onTap: null),
+            Center(child: FavoriteButton(onTap: null)),
           ],
         ),
         body: StreamBuilder<List<Movie>>(
