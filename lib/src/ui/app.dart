@@ -6,6 +6,7 @@ import 'screens/favorites_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/filters_screen.dart';
+import 'screens/navigation_screen.dart';
 import '../blocs/genres_bloc.dart';
 import '../blocs/response_bloc.dart';
 import '../blocs/favorites_bloc.dart';
@@ -48,6 +49,7 @@ class App extends StatelessWidget {
           SplashScreen.routeName: (context) => SplashScreen(),
           FavoritesScreen.routeName: (context) => FavoritesScreen(),
           FiltersScreen.routeName: (context) => FiltersScreen(),
+          NavigationScreen.routeName: (context) => NavigationScreen(),
         },
         initialRoute: SplashScreen.routeName,
       ),

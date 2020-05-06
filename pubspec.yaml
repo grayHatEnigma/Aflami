@@ -18,9 +18,6 @@ dependencies:
   youtube_player_flutter: ^6.1.0+7
   provider: ^4.0.5
   shared_preferences: ^0.5.7
-  fluttertoast: ^4.0.1
-  
-
   # BLoC Pattern Packages
   # equatable: ^1.1.1
   # bloc: ^3.0.0

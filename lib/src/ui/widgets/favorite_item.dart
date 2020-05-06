@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'no_poster.dart';
 import '../screens/detail_screen.dart';
 import '../../blocs/trailer_bloc.dart';
 import '../../blocs/favorites_bloc.dart';
@@ -65,9 +66,9 @@ class FavoriteItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                child: poster,
+                child: movie.posterPath == null ? NoPosterWidget() : poster,
                 height: 150,
-                width: 110,
+                width: 105,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

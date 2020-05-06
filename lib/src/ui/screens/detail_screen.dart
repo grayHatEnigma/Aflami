@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../widgets/no_poster.dart';
 import '../../models/movie.dart';
 import '../../models/trailer.dart';
 import '../../blocs/trailer_bloc.dart';
@@ -83,7 +84,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: movie.hashCode,
-                    child: movie.posterPath == null ? Container() : poster,
+                    child: movie.posterPath == null ? NoPosterWidget() : poster,
                   ),
                 ),
               ),

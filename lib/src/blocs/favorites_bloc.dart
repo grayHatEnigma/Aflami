@@ -6,15 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc_base.dart';
 import '../models/movie.dart';
-import '../resources/repository.dart';
 
 class FavoritesBloc extends BlocBase {
-  // Respository for api requests
-  static final Repository _repository = Repository();
-
   // State
-  // will be  a set of movies
-
+  //  a set of movies
   Set<Movie> _favorites = {};
 
   int get _totalFavorites => _favorites.length;

@@ -8,24 +8,17 @@ import '../../blocs/genres_bloc.dart';
 import '../../models/genres.dart';
 import '../../models/genre.dart';
 
-class FiltersScreen extends StatefulWidget {
+class FiltersScreen extends StatelessWidget {
   static final routeName = 'filters';
 
-  @override
-  _FiltersScreenState createState() => _FiltersScreenState();
-}
-
-class _FiltersScreenState extends State<FiltersScreen> {
-  //
-  int currentGenreId;
-  int newGenreId;
-  //
   @override
   Widget build(BuildContext context) {
     // BLoCs
     final genresBloc = Provider.of<GenresBloc>(context);
     final responseBloc = Provider.of<ResponseBloc>(context);
-
+    //
+    int currentGenreId;
+    int newGenreId;
     //
     currentGenreId = responseBloc.currentGenreId;
     //
@@ -65,7 +58,8 @@ class _FiltersScreenState extends State<FiltersScreen> {
                             .map(
                               (movieGenre) => Text(
                                 movieGenre.name,
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                    color: Colors.white, fontFamily: 'Raleway'),
                               ),
                             )
                             .toList(),
@@ -84,7 +78,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
                     );
                   }),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             InkWell(

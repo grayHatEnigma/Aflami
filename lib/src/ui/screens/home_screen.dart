@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'favorites_screen.dart';
 import 'filters_screen.dart';
+import 'navigation_screen.dart';
 import '../widgets/favorite_button.dart';
 import '../widgets/movie_card.dart';
 import '../../blocs/response_bloc.dart';
@@ -53,51 +53,13 @@ class HomeScreen extends StatelessWidget {
                     Navigator.of(context).pushNamed(FiltersScreen.routeName),
               ),
             ),
-
-            PopupMenuButton<ResponseEvent>(
-              offset: Offset(20, 45),
-              elevation: 20,
-              color: Colors.red[900],
-              icon: Icon(Icons.save, size: 31),
-              onSelected: (event) {
-                responseBloc.dispatch(event);
-                Fluttertoast.showToast(
-                  msg:
-                      'Your journey has been ${event.toString().split('.').last}ed',
-                  textColor: Colors.white,
-                  backgroundColor: Colors.red,
-                );
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: Text(
-                    'Load journey',
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  value: ResponseEvent.load,
-                ),
-                PopupMenuItem(
-                    child: Text(
-                      'Save journey',
-                      style: TextStyle(color: Colors.white, fontSize: 15),
-                    ),
-                    value: ResponseEvent.save),
-              ],
+            Center(
+              child: IconButton(
+                icon: const Icon(Icons.search, size: 31),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(NavigationScreen.routeName),
+              ),
             ),
-
-            //   Center(
-            //    child: IconButton(
-            //     icon: const Icon(Icons.save, size: 31),
-            //     onPressed: () {
-            //       responseBloc.dispatch(ResponseEvent.save);
-            //       Fluttertoast.showToast(
-            //         msg: 'Your journey has been saved',
-            //         textColor: Colors.white,
-            //         backgroundColor: Colors.red,
-            //       );
-            //     },
-            //   ),
-            // ),
           ],
         ),
         bottomNavigationBar: PageBottomBar(),

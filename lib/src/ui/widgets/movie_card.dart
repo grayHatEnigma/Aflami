@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'no_poster.dart';
 import '../screens/detail_screen.dart';
 import '../../resources/tmdb_api.dart';
 import '../../blocs/trailer_bloc.dart';
@@ -73,7 +74,7 @@ class MovieCard extends StatelessWidget {
               clipper: _SquareClipper(),
               child: Hero(
                   tag: movie.hashCode,
-                  child: movie.posterPath == null ? Container() : poster),
+                  child: movie.posterPath == null ? NoPosterWidget() : poster),
             ),
             Container(
               decoration: _buildGradientBackground(),

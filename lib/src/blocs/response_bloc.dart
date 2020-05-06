@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bloc_base.dart';
 import '../models/response.dart';
@@ -13,12 +12,13 @@ class ResponseBloc extends BlocBase {
   int _pageIndex = 1;
   int _genre = 0;
 
-  // This getter is to allow the filters screen a - direct - access
-  // to the current selected  genre. id
+  // This getter is to allow the filters / navigation screens a - direct - access
+  // to the current selected  genre. id / index
   // I know this is a violation to the main BLoC principle
   // ( only depends on streams in exposing and manuplating data )
   // but it will save a lot of unesseccary complexity and boilerplate
   int get currentGenreId => _genre;
+  int get currentPageIndex => _pageIndex;
   // So Sorry BLoC :/ :( !
 
   // Thsi should be injected
@@ -28,20 +28,26 @@ class ResponseBloc extends BlocBase {
   factory ResponseBloc() => instance;
   ResponseBloc._() {
     // fetch initial data on Bloc creation
-    _loadSession();
-    // _fetchResult(_pageIndex, _genre);
+    _fetchResult(_pageIndex, _genre);
 
     // listen to events from index buttons in the home screen
-    _pageIndexController.stream.listen(_mapResposneEventToState);
+    _eventController.stream.listen(_mapResposneEventToState);
 
     // listen to  genre changes from filters screen
-    _movieGenreController.stream.listen(_handleGenreChange);
+    _genreInjectorController.stream.listen(_handleGenreChange);
+
+    // listen to  page index changes from navigator screen
+    _pageInjectorController.stream.listen(_handleIndexChange);
   }
 
   // Controllers
+  // events related ( actions )
+  final _eventController = PublishSubject<ResponseEvent>();
+  final _genreInjectorController = PublishSubject<int>();
+  final _pageInjectorController = PublishSubject<int>();
+
+  // data related (show or expose data to the UI)
   final _moviesController = PublishSubject<ResponseModel>();
-  final _pageIndexController = PublishSubject<ResponseEvent>();
-  final _movieGenreController = PublishSubject<int>();
   final _indexController = BehaviorSubject<int>();
   final _genreIdController = BehaviorSubject<int>();
 
@@ -51,10 +57,11 @@ class ResponseBloc extends BlocBase {
   Stream<int> get genreId => _genreIdController.stream;
 
   // sinks
-  Function(ResponseEvent) get dispatch => _pageIndexController.sink.add;
-  Function(int) get chooseGenre => _movieGenreController.sink.add;
+  Function(ResponseEvent) get dispatch => _eventController.sink.add;
+  Function(int) get chooseGenre => _genreInjectorController.sink.add;
+  Function(int) get navigateTo => _pageInjectorController.sink.add;
 
-  // a function that make the network request to retrive list of movies with given page index
+  // a function that make the main network request to retrive list of movies with given page index
   Future _fetchResult(int pageIndex, int genre) async {
     try {
       final response = await _repository.fetchMoviesResponse(pageIndex, genre);
@@ -64,109 +71,74 @@ class ResponseBloc extends BlocBase {
     }
   }
 
-  // ############ Handling ################
+  // ######################## Handling ################################
+
+  void _handleIndexChange(newIndex) {
+    // update the pgae index
+    _pageIndex = newIndex;
+
+    // make the api call for the new page index and notify all interested widgets
+    _loadAndNotify();
+  }
 
   // handle genre changes
   void _handleGenreChange(newGenre) {
     // reset page index at each new genre
-    _pageIndex = 1;
-    // set the genre
+    _pageIndex = 1; // this is optional but I prefer it.
+
+    // update the genre.
     _genre = newGenre;
 
     // make the api call for the new genre and notify all interested widgets
     _loadAndNotify();
   }
 
-  // a function the map the incoming index events from the ui to index state
+  // a function the map the incoming response events from the ui to state ( index )
   void _mapResposneEventToState(ResponseEvent event) async {
-    if (event == ResponseEvent.next && _pageIndex <= 500) {
+    if (event == ResponseEvent.next && _pageIndex < 500) {
       _pageIndex++;
     } else if (event == ResponseEvent.previous && _pageIndex > 1) {
       _pageIndex--;
     } else if (event == ResponseEvent.home) {
       _pageIndex = 1;
-    } else if (event == ResponseEvent.save) {
-      _saveSession();
-      return;
-    } else if (event == ResponseEvent.load) {
-      _loadSession();
+    } else {
       return;
     }
-
+    // a routine to add into the sinks
     _loadAndNotify();
   }
 
-// ############# routines ###############
+// ######################### routines ###########################
   void _loadAndNotify() async {
-    // update the page index in home screen
+    // update the page index in home screen and whoever is listening
     _indexController.add(_pageIndex);
 
-    //
+    // update the genre id in home screen and whoever is listening
     _genreIdController.add(_genre);
-
-    //
 
     // to show a loading bar while we fetch the next page
     _loading();
+
     // fetch the movie page
     await _fetchResult(_pageIndex, _genre);
   }
 
+  // this function sole purpose is to show a loading bar while we fetch the next page
+  // by adding 'null' into the movies controller until the next page fetching is completed
   void _loading() => _moviesController.sink.add(null);
 
-  void _saveSession() {
-    _saveToSharedPreferences([_genre, _pageIndex]);
-  }
-
-  void _loadSession() async {
-    final session = await _readFromSharedPreferences();
-    if (session.length == 2) {
-      _genre = session[0];
-      _pageIndex = session[1];
-    }
-    // make the api call for the new genre and index notify all interested widgets
-    _loadAndNotify();
-  }
-
-  // ######## Shared Prefrences #########
-  Future<SharedPreferences> get _sharedPreferences async =>
-      await SharedPreferences.getInstance();
-
-  Future<List<int>> _readFromSharedPreferences() async {
-    final shared = await _sharedPreferences;
-    final list = shared.getStringList('session');
-    if (list != null) {
-      return list
-          .map(
-            (value) => int.parse(value),
-          )
-          .toList();
-    }
-    return [];
-  }
-
-  void _saveToSharedPreferences(List<int> session) async {
-    final shared = await _sharedPreferences;
-    shared.setStringList(
-      'session',
-      session
-          .map(
-            (value) => value.toString(),
-          )
-          .toList(),
-    );
-  }
-
-  // ################## disposing ###############
+  // ########################## disposing ###############################
   @override
   void dispose() {
     print('Response Bloc is dispose');
     _moviesController.close();
-    _pageIndexController.close();
+    _eventController.close();
     _indexController.close();
     _genreIdController.close();
-    _movieGenreController.close();
+    _genreInjectorController.close();
+    _pageInjectorController.close();
   }
 }
 
-enum ResponseEvent { next, previous, home, retry, save, load }
+// I prefer this ( Enums ) for Events over using Objects and classes.
+enum ResponseEvent { next, previous, home, retry }
