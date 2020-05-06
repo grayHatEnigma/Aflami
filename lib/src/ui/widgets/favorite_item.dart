@@ -17,7 +17,7 @@ class FavoriteItem extends StatelessWidget {
   });
 
 // a function that handles the navigation code and disposing the trailer bloc
-  void _navigateToDetail(BuildContext context, Image poster) {
+  void _navigateToDetail(BuildContext context, Widget poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);
     Navigator.of(context)
@@ -33,7 +33,11 @@ class FavoriteItem extends StatelessWidget {
         .then((_) => trailerBloc.dispose);
   }
 
-  Image _cachePoster() {
+  Widget _cachePoster() {
+    if (movie.posterPath == null) {
+      return NoPosterWidget();
+    }
+
     return Image.network(
       '${TmdbApi.coverImagePath}${movie.posterPath}',
       loadingBuilder: (BuildContext context, Widget child,
@@ -66,7 +70,7 @@ class FavoriteItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                child: movie.posterPath == null ? NoPosterWidget() : poster,
+                child: poster,
                 height: 150,
                 width: 105,
               ),

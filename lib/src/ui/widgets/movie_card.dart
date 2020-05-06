@@ -24,7 +24,7 @@ class MovieCard extends StatelessWidget {
   to insure the disposing of the trailer bloc when the user comes back to the home screen
   */
 
-  void _navigateToDetail(BuildContext context, Image poster) {
+  void _navigateToDetail(BuildContext context, Widget poster) {
     final trailerBloc = TrailerBloc();
     trailerBloc.findTrailers(movie.id);
     Navigator.of(context)
@@ -40,7 +40,10 @@ class MovieCard extends StatelessWidget {
         .then((_) => trailerBloc.dispose);
   }
 
-  Image _cachePoster() {
+  Widget _cachePoster() {
+    if (movie.posterPath == null) {
+      return NoPosterWidget();
+    }
     return Image.network(
       '${TmdbApi.coverImagePath}${movie.posterPath}',
       loadingBuilder: (BuildContext context, Widget child,
@@ -72,9 +75,7 @@ class MovieCard extends StatelessWidget {
           children: <Widget>[
             ClipRect(
               clipper: _SquareClipper(),
-              child: Hero(
-                  tag: movie.hashCode,
-                  child: movie.posterPath == null ? NoPosterWidget() : poster),
+              child: Hero(tag: movie.hashCode, child: poster),
             ),
             Container(
               decoration: _buildGradientBackground(),

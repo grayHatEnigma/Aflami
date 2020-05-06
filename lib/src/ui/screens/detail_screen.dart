@@ -18,7 +18,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   Movie movie;
-  Image poster;
+  Widget poster;
   TrailerBloc trailerBloc;
   FavoritesBloc favoritesBloc;
   bool isFavorite;
@@ -30,7 +30,7 @@ class _DetailScreenState extends State<DetailScreen> {
     favoritesBloc = Provider.of<FavoritesBloc>(context);
     final arguments = ModalRoute.of(context).settings.arguments as List;
     movie = arguments[0] as Movie;
-    poster = arguments[1] as Image;
+    poster = arguments[1] as Widget;
     favoritesBloc.checkMovie(movie.id);
   }
 
@@ -84,7 +84,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 flexibleSpace: FlexibleSpaceBar(
                   background: Hero(
                     tag: movie.hashCode,
-                    child: movie.posterPath == null ? NoPosterWidget() : poster,
+                    child: poster,
                   ),
                 ),
               ),
@@ -168,7 +168,7 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget noTrailer() {
     return Center(
       child: Container(
-        child: Text("No trailer available"),
+        child: Text("No Trailer Available"),
       ),
     );
   }

@@ -20,7 +20,8 @@ class Movie {
     _id = encodedProps[0];
     _voteAverage = num.parse(encodedProps[1]);
     _title = encodedProps[2];
-    _posterPath = encodedProps[3];
+    // this line is important cause it didn't consider 'null' as String a null Object.
+    _posterPath = encodedProps[3] == 'null' ? null : encodedProps[3];
     _overview = encodedProps[4];
     _releaseDate = encodedProps[5];
   }
