@@ -101,6 +101,7 @@ class ResponseBloc extends BlocBase {
       _pageIndex--;
     } else if (event == ResponseEvent.home) {
       _pageIndex = 1;
+    } else if (event == ResponseEvent.retry) {
     } else {
       return;
     }

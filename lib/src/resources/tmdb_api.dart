@@ -83,7 +83,7 @@ Improved Api Calls
       var response = await http.get(url);
       parsedJson = _response(response);
     } on SocketException {
-      throw FetchDataException('No Internet connection');
+      throw FetchDataException('No Internet Connection');
     }
     return parsedJson;
   }
