@@ -102,7 +102,7 @@ Improved Api Calls
 
       default:
         throw FetchDataException(
-            'Error occured while Communication with Server with StatusCode : ${response.statusCode}');
+            'Error occured while communicating with server - Restart the app and try again');
     }
   }
 } // class
