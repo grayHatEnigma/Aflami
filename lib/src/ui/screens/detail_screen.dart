@@ -82,7 +82,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             }),
                       ),
                     ],
-                    expandedHeight: 250.0,
+                    expandedHeight: 275.0,
                     floating: false,
                     pinned: true,
                     elevation: 0.0,
@@ -162,7 +162,8 @@ class _DetailScreenState extends State<DetailScreen> {
                             : noTrailer();
                       } else
                         return lodingTrailer();
-                    })
+                    }),
+                SizedBox(height: 5)
               ],
             ),
           ),

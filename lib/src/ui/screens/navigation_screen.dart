@@ -68,7 +68,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               data: SliderTheme.of(context).copyWith(
                 thumbShape: RoundSliderThumbShape(enabledThumbRadius: 13),
                 overlayShape: RoundSliderOverlayShape(overlayRadius: 25),
-                thumbColor: Colors.amber[700],
+                thumbColor: Colors.amber[600],
                 overlayColor: Colors.white.withOpacity(0.25),
                 activeTrackColor: Colors.amber,
                 inactiveTrackColor: Colors.white,
