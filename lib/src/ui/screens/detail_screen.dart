@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../widgets/no_poster.dart';
 import '../../models/movie.dart';
 import '../../models/trailer.dart';
 import '../../blocs/trailer_bloc.dart';
@@ -44,57 +43,64 @@ class _DetailScreenState extends State<DetailScreen> {
         child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return <Widget>[
-              SliverAppBar(
-                actions: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: StreamBuilder<bool>(
-                        stream: favoritesBloc.isFavorite,
-                        initialData: false,
-                        builder: (context, snapshot) {
-                          return GestureDetector(
-                            onTap: () {
-                              snapshot.data
-                                  ? favoritesBloc.inRemoveFavorite(movie)
-                                  : favoritesBloc.inAddFavorite(movie);
-                              favoritesBloc.checkMovie(movie.id);
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: Colors.black87,
-                              child: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Icon(
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverSafeArea(
+                  top: false,
+                  sliver: SliverAppBar(
+                    actions: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: StreamBuilder<bool>(
+                            stream: favoritesBloc.isFavorite,
+                            initialData: false,
+                            builder: (context, snapshot) {
+                              return GestureDetector(
+                                onTap: () {
                                   snapshot.data
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color:
-                                      snapshot.data ? Colors.red : Colors.white,
-                                  size: 27,
+                                      ? favoritesBloc.inRemoveFavorite(movie)
+                                      : favoritesBloc.inAddFavorite(movie);
+                                  favoritesBloc.checkMovie(movie.id);
+                                },
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.black87,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2.0),
+                                    child: Icon(
+                                      snapshot.data
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: snapshot.data
+                                          ? Colors.red
+                                          : Colors.white,
+                                      size: 27,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
-                ],
-                expandedHeight: 250.0,
-                floating: false,
-                pinned: true,
-                elevation: 0.0,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Hero(
-                    tag: movie.hashCode,
-                    child: poster,
+                              );
+                            }),
+                      ),
+                    ],
+                    expandedHeight: 250.0,
+                    floating: false,
+                    pinned: true,
+                    elevation: 0.0,
+                    flexibleSpace: FlexibleSpaceBar(
+                      background: Hero(
+                        tag: movie.hashCode,
+                        child: poster,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ];
           },
           body: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.only(right: 10, left: 10, top: 5),
             child: ListView(
               children: <Widget>[
-                Container(margin: EdgeInsets.only(top: 5.0)),
                 Text(
                   movie.title,
                   style: TextStyle(
@@ -102,25 +108,21 @@ class _DetailScreenState extends State<DetailScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
+                SizedBox(height: 16),
                 Row(
                   children: <Widget>[
                     Icon(
                       Icons.star,
                       color: Colors.amber,
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 1.0, right: 1.0),
-                    ),
+                    SizedBox(width: 2),
                     Text(
                       movie.voteAverage.toString(),
                       style: TextStyle(
                         fontSize: 18.0,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(left: 10.0, right: 10.0),
-                    ),
+                    SizedBox(width: 20),
                     Text(
                       movie.releaseDate.toString(),
                       style: TextStyle(
@@ -129,8 +131,12 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ],
                 ),
-                Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
-                Text(movie.overview),
+                SizedBox(height: 16),
+                Container(
+                  child: Text(
+                    movie.overview,
+                  ),
+                ),
                 Center(
                   child: Container(
                     margin: EdgeInsets.only(top: 30, bottom: 25),
@@ -146,7 +152,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0)),
+                SizedBox(height: 16),
                 StreamBuilder(
                     stream: trailerBloc.trailers,
                     builder: (context, snapshot) {
@@ -187,13 +193,14 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Widget trailerLayout(TrailerModel data) {
     // Show only the first result in the trailer model
-    return Container(
-      height: 300,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          trailerItem(data, 0),
-        ],
+    return Center(
+      child: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            trailerItem(data, 0),
+          ],
+        ),
       ),
     );
   }
@@ -207,19 +214,17 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
 
-    return Expanded(
-      child: YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: Colors.amber,
-        progressColors: ProgressBarColors(
-          playedColor: Colors.amber,
-          handleColor: Colors.amberAccent,
-        ),
-        onReady: () {
-          print('Player is ready.');
-        },
+    return YoutubePlayer(
+      controller: _controller,
+      showVideoProgressIndicator: true,
+      progressIndicatorColor: Colors.amber,
+      progressColors: ProgressBarColors(
+        playedColor: Colors.amber,
+        handleColor: Colors.amberAccent,
       ),
+      onReady: () {
+        print('Player is ready.');
+      },
     );
   }
 }

@@ -20,50 +20,50 @@ class HomeScreen extends StatelessWidget {
     /// BLoCs
     final responseBloc = Provider.of<ResponseBloc>(context);
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        appBar: AppBar(
-          centerTitle: false,
-          title: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Image.asset(
-                'images/aflami.png',
-                height: 30,
-                width: 30,
-              ),
-              SizedBox(width: 7),
-              Text(
-                'Aflami',
-                style: Theme.of(context).textTheme.title,
-              ),
-            ],
-          ),
-          actions: [
-            Center(
-              child: FavoriteButton(onTap: () {
-                Navigator.pushNamed(context, FavoritesScreen.routeName);
-              }),
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        centerTitle: false,
+        title: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Image.asset(
+              'images/aflami.png',
+              height: 30,
+              width: 30,
             ),
-            Center(
-              child: IconButton(
-                icon: const Icon(Icons.movie, size: 31),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed(FiltersScreen.routeName),
-              ),
-            ),
-            Center(
-              child: IconButton(
-                icon: const Icon(Icons.search, size: 31),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed(NavigationScreen.routeName),
-              ),
+            SizedBox(width: 7),
+            Text(
+              'Aflami',
+              style: Theme.of(context).textTheme.headline6,
             ),
           ],
         ),
-        bottomNavigationBar: PageBottomBar(),
-        body: Column(
+        actions: [
+          Center(
+            child: FavoriteButton(onTap: () {
+              Navigator.pushNamed(context, FavoritesScreen.routeName);
+            }),
+          ),
+          Center(
+            child: IconButton(
+              icon: const Icon(Icons.movie, size: 31),
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(FiltersScreen.routeName),
+            ),
+          ),
+          Center(
+            child: IconButton(
+              icon: const Icon(Icons.search, size: 31),
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(NavigationScreen.routeName),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: PageBottomBar(),
+      body: SafeArea(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             StreamBuilder<int>(

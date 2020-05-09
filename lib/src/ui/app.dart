@@ -36,12 +36,12 @@ class App extends StatelessWidget {
           backgroundColor: Colors.black,
           canvasColor: Colors.grey,
           textTheme: TextTheme(
-            title: TextStyle(
+            headline6: TextStyle(
                 color: Colors.black,
                 fontFamily: 'Raleway',
                 fontSize: 23,
                 fontWeight: FontWeight.bold),
-            body1: TextStyle(color: Colors.white, fontSize: 21),
+            bodyText2: TextStyle(color: Colors.white, fontSize: 21),
           ),
         ),
         routes: {

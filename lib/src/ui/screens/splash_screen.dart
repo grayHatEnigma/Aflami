@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
                     'Aflami',
                     style: Theme.of(context)
                         .textTheme
-                        .title
+                        .headline6
                         .copyWith(color: Colors.white, fontSize: 27),
                   ),
                 ],

@@ -13,19 +13,19 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final favoritesBloc = Provider.of<FavoritesBloc>(context);
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        appBar: AppBar(
-          title: Text(
-            'Favorites',
-            style: Theme.of(context).textTheme.title,
-          ),
-          actions: [
-            Center(child: FavoriteButton(onTap: null)),
-          ],
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        title: Text(
+          'Favorites',
+          style: Theme.of(context).textTheme.headline6,
         ),
-        body: StreamBuilder<List<Movie>>(
+        actions: [
+          Center(child: FavoriteButton(onTap: null)),
+        ],
+      ),
+      body: SafeArea(
+        child: StreamBuilder<List<Movie>>(
             stream: favoritesBloc.outFavorites,
             builder: (context, snapshot) {
               if (snapshot.hasData) {

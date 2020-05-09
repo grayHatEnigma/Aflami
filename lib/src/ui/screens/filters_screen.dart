@@ -22,13 +22,13 @@ class FiltersScreen extends StatelessWidget {
     //
     currentGenreId = responseBloc.currentGenreId;
     //
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        appBar: AppBar(
-          title: Text('Filters', style: Theme.of(context).textTheme.title),
-        ),
-        body: Column(
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        title: Text('Filters', style: Theme.of(context).textTheme.headline6),
+      ),
+      body: SafeArea(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'no_poster.dart';
+import 'poster.dart';
 import '../screens/detail_screen.dart';
-import '../../resources/tmdb_api.dart';
 import '../../blocs/trailer_bloc.dart';
 import '../../models/movie.dart';
 
@@ -40,32 +39,10 @@ class MovieCard extends StatelessWidget {
         .then((_) => trailerBloc.dispose);
   }
 
-  Widget _cachePoster() {
-    if (movie.posterPath == null) {
-      return NoPosterWidget();
-    }
-    return Image.network(
-      '${TmdbApi.coverImagePath}${movie.posterPath}',
-      loadingBuilder: (BuildContext context, Widget child,
-          ImageChunkEvent loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
-          child: CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes
-                : null,
-          ),
-        );
-      },
-      fit: BoxFit.cover,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // cache the poster image
-    final poster = _cachePoster();
+    final poster = Poster(movie);
 
     return InkWell(
       onTap: () => _navigateToDetail(context, poster),

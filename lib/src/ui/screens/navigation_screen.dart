@@ -30,13 +30,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).backgroundColor,
-        appBar: AppBar(
-          title: Text('Navigation', style: Theme.of(context).textTheme.title),
-        ),
-        body: Column(
+    return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
+      appBar: AppBar(
+        title: Text('Navigation', style: Theme.of(context).textTheme.headline6),
+      ),
+      body: SafeArea(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
@@ -57,7 +57,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             Text(
               newPageIndex.toString(),
               style: TextStyle(
-                  color: Colors.teal,
+                  color: Theme.of(context).primaryColor,
                   fontSize: 27,
                   fontWeight: FontWeight.w800),
             ),

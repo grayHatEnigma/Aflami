@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'no_poster.dart';
+import 'poster.dart';
 import '../screens/detail_screen.dart';
 import '../../blocs/trailer_bloc.dart';
 import '../../blocs/favorites_bloc.dart';
-import '../../resources/tmdb_api.dart';
 import '../../models/movie.dart';
 
 class FavoriteItem extends StatelessWidget {
@@ -33,33 +32,11 @@ class FavoriteItem extends StatelessWidget {
         .then((_) => trailerBloc.dispose);
   }
 
-  Widget _cachePoster() {
-    if (movie.posterPath == null) {
-      return NoPosterWidget();
-    }
-
-    return Image.network(
-      '${TmdbApi.coverImagePath}${movie.posterPath}',
-      loadingBuilder: (BuildContext context, Widget child,
-          ImageChunkEvent loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Center(
-          child: CircularProgressIndicator(
-            value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes
-                : null,
-          ),
-        );
-      },
-      fit: BoxFit.cover,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final favoritesBloc = Provider.of<FavoritesBloc>(context);
-    final poster = _cachePoster();
+    // cache the poster
+    final poster = Poster(movie);
 
     return Padding(
       padding: const EdgeInsets.all(5.0),
